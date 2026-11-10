@@ -1,0 +1,18 @@
+ha-titanOS
+
+This distribution contains code, tests, documentation and brand assets from:
+  ksooo/ha-philips-titanos
+  https://github.com/ksooo/ha-philips-titanos
+  Source revision d23ef23d98d6ce9a54371a147d140494e3152fc3
+  Licensed under the Apache License, Version 2.0 (LICENSE.upstream).
+
+Modified files carry notices identifying modifications by Alex for ha-titanOS.
+Changes include pairing without Cast, conservative power evidence, bounded polling,
+request serialization, credential-safe diagnostics, opt-in capabilities and tests.
+MAINTENANCE.md is preserved as upstream observations on a DIFFERENT TV, not evidence
+about the Philips 55PUS8079/12. See docs/RESEARCH.md for applicability.
+
+New DIAL code is an independent implementation based on published protocol notes.
+No code was copied from daCream87/uc-philips-titanos (no repository license found).
+The original MIT LICENSE of ruisilva-bit/ha-titanOS is retained and does not replace
+Apache-2.0 licensing of imported material.

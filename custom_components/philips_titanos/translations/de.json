@@ -1,0 +1,130 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Gerät ist bereits konfiguriert",
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "not_supported": "Dieses Gerät ist kein Philips-Fernseher mit Titan OS.",
+      "reauth_successful": "Die erneute Authentifizierung war erfolgreich",
+      "reconfigure_successful": "Die Neukonfiguration war erfolgreich",
+      "unique_id_mismatch": "Das ist ein anderer Fernseher als der konfigurierte."
+    },
+    "error": {
+      "cannot_connect": "Verbindung fehlgeschlagen",
+      "invalid_pin": "Die PIN war falsch oder ist abgelaufen. Der Fernseher zeigt jetzt eine neue PIN an.",
+      "tv_off": "Der Fernseher ist im Standby. Bitte einschalten und erneut absenden."
+    },
+    "flow_title": "{name}",
+    "step": {
+      "pair": {
+        "data": {
+          "pin": "PIN"
+        },
+        "data_description": {
+          "pin": "Die auf dem Fernseher angezeigte PIN. Sie ist 30 Sekunden lang gültig."
+        },
+        "description": "Bitte die auf {name} angezeigte PIN eingeben."
+      },
+      "reauth_confirm": {
+        "description": "{name} akzeptiert die gespeicherten Zugangsdaten nicht mehr. Bitte den Fernseher einschalten und absenden, um ihn erneut zu koppeln.",
+        "title": "Erneut koppeln"
+      },
+      "reconfigure": {
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "Hostname oder IP-Adresse des Fernsehers."
+        },
+        "description": "Adresse des Fernsehers aktualisieren."
+      },
+      "user": {
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "Hostname oder IP-Adresse des Fernsehers."
+        },
+        "description": "Bitte den Fernseher einschalten. Nach dem Absenden zeigt er eine PIN zum Koppeln an."
+      },
+      "zeroconf_confirm": {
+        "description": "Soll {name} hinzugefügt werden? Bitte den Fernseher einschalten. Nach dem Absenden zeigt er eine PIN zum Koppeln an.",
+        "title": "Philips-Fernseher gefunden"
+      }
+    }
+  },
+  "entity": {
+    "light": {
+      "ambilight": {
+        "name": "Ambilight",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "video_standard": "Video: Standard",
+              "video_sports": "Video: Sport",
+              "video_natural": "Video: Kino",
+              "video_game": "Video: Spiele",
+              "audio_energy_adaptive_brightness": "Audio: Musik",
+              "audio_energy_adaptive_colors": "Audio: Farben",
+              "audio_vu_meter": "Audio: VU-Meter",
+              "audio_spectrum_analyzer": "Audio: Spektrum",
+              "audio_knight_rider_clockwise": "Audio: Lauflicht im Uhrzeigersinn",
+              "audio_knight_rider_alternating": "Audio: Lauflicht hin und her",
+              "audio_random_pixel_flash": "Audio: Zufallsblitze",
+              "audio_strobe": "Audio: Stroboskop",
+              "audio_party": "Audio: Party"
+            }
+          }
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Der Fernseher hat den Befehl nicht angenommen: {error}"
+    },
+    "hold_not_supported": {
+      "message": "Der Fernseher kann Tasten nicht gedrückt halten."
+    },
+    "invalid_media_type": {
+      "message": "Abspielbar sind nur Sender, nicht {media_type}."
+    },
+    "invalid_source": {
+      "message": "{source} ist nicht auswählbar, nur Home und Live TV."
+    },
+    "no_ambilight_off": {
+      "message": "Das Einstellungsmenü des Fernsehers hat keinen Eintrag, um Ambilight auszuschalten."
+    },
+    "no_channels": {
+      "message": "Der Fernseher hat keine Sender."
+    },
+    "no_mac": {
+      "message": "Der Fernseher kann nicht eingeschaltet werden: Beim Koppeln wurde keine Netzwerkschnittstelle mit Wake-on-LAN gefunden."
+    },
+    "unknown_channel": {
+      "message": "Der Fernseher hat keinen Sender {channel}."
+    },
+    "unknown_effect": {
+      "message": "Der Fernseher hat keinen Ambilight-Stil {effect}."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Validated TV capabilities",
+        "description": "Enable only after observing the result on this TV. HTTP 200, MQTT login and a running DIAL app do not prove screen power. Powerstate must be checked while ON and in quick standby. See README for the validation procedure. All controls can first be tested via remote.send_command; enable WOL to test it, then disable it if unsuccessful.",
+        "data": {
+          "keys_verified": "Volume and Standby keys tested on this TV",
+          "wol_verified": "Enable Wake-on-LAN (hardware validation required)",
+          "powerstate_verified": "Powerstate endpoint follows the physical screen in standby",
+          "mute_state_verified": "Mute reading follows physical remote",
+          "ambilight_verified": "Ambilight confirmed working on this firmware",
+          "broadcast": "WOL IPv4 broadcast address",
+          "dial_verified": "Enable local DIAL apps (validate on this TV)"
+        }
+      }
+    },
+    "error": {
+      "invalid_broadcast": "Enter a valid IPv4 broadcast address."
+    }
+  }
+}
