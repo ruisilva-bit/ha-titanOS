@@ -1,17 +1,16 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Gerät ist bereits konfiguriert",
-      "cannot_connect": "Verbindung fehlgeschlagen",
-      "not_supported": "Dieses Gerät ist kein Philips-Fernseher mit Titan OS.",
-      "reauth_successful": "Die erneute Authentifizierung war erfolgreich",
-      "reconfigure_successful": "Die Neukonfiguration war erfolgreich",
-      "unique_id_mismatch": "Das ist ein anderer Fernseher als der konfigurierte."
+      "already_configured": "Device is already configured",
+      "cannot_connect": "Failed to connect",
+      "not_supported": "This device is not a Philips TV with Titan OS.",
+      "reauth_successful": "Re-authentication was successful",
+      "reconfigure_successful": "Reconfiguration was successful",
+      "unique_id_mismatch": "This is a different TV than the one configured."
     },
     "error": {
-      "cannot_connect": "Verbindung fehlgeschlagen",
-      "invalid_pin": "Die PIN war falsch oder ist abgelaufen. Der Fernseher zeigt jetzt eine neue PIN an.",
-      "tv_off": "Der Fernseher ist im Standby. Bitte einschalten und erneut absenden."
+      "cannot_connect": "Failed to connect",
+      "invalid_pin": "The PIN was wrong or has expired. A new PIN is now shown on the TV."
     },
     "flow_title": "{name}",
     "step": {
@@ -20,35 +19,35 @@
           "pin": "PIN"
         },
         "data_description": {
-          "pin": "Die auf dem Fernseher angezeigte PIN. Sie ist 30 Sekunden lang gültig."
+          "pin": "The PIN shown on the TV. It is valid for 30 seconds."
         },
-        "description": "Bitte die auf {name} angezeigte PIN eingeben."
+        "description": "Enter the PIN shown on {name}."
       },
       "reauth_confirm": {
-        "description": "{name} akzeptiert die gespeicherten Zugangsdaten nicht mehr. Bitte den Fernseher einschalten und absenden, um ihn erneut zu koppeln.",
-        "title": "Erneut koppeln"
+        "description": "{name} no longer accepts the stored credentials. Switch the TV on and submit to pair again.",
+        "title": "Pair again"
       },
       "reconfigure": {
         "data": {
           "host": "Host"
         },
         "data_description": {
-          "host": "Hostname oder IP-Adresse des Fernsehers."
+          "host": "The hostname or IP address of the TV."
         },
-        "description": "Adresse des Fernsehers aktualisieren."
+        "description": "Update the address of the TV."
       },
       "user": {
         "data": {
           "host": "Host"
         },
         "data_description": {
-          "host": "Hostname oder IP-Adresse des Fernsehers."
+          "host": "The hostname or IP address of the TV."
         },
-        "description": "Bitte den Fernseher einschalten. Nach dem Absenden zeigt er eine PIN zum Koppeln an."
+        "description": "Switch the TV on. After submitting, it shows a PIN for pairing."
       },
       "zeroconf_confirm": {
-        "description": "Soll {name} hinzugefügt werden? Bitte den Fernseher einschalten. Nach dem Absenden zeigt er eine PIN zum Koppeln an.",
-        "title": "Philips-Fernseher gefunden"
+        "description": "Do you want to add {name}? Switch the TV on. After submitting, it shows a PIN for pairing.",
+        "title": "Philips TV found"
       }
     }
   },
@@ -60,17 +59,17 @@
           "effect": {
             "state": {
               "video_standard": "Video: Standard",
-              "video_sports": "Video: Sport",
-              "video_natural": "Video: Kino",
-              "video_game": "Video: Spiele",
-              "audio_energy_adaptive_brightness": "Audio: Musik",
-              "audio_energy_adaptive_colors": "Audio: Farben",
-              "audio_vu_meter": "Audio: VU-Meter",
-              "audio_spectrum_analyzer": "Audio: Spektrum",
-              "audio_knight_rider_clockwise": "Audio: Lauflicht im Uhrzeigersinn",
-              "audio_knight_rider_alternating": "Audio: Lauflicht hin und her",
-              "audio_random_pixel_flash": "Audio: Zufallsblitze",
-              "audio_strobe": "Audio: Stroboskop",
+              "video_sports": "Video: Sports",
+              "video_natural": "Video: Cinema",
+              "video_game": "Video: Game",
+              "audio_energy_adaptive_brightness": "Audio: Music",
+              "audio_energy_adaptive_colors": "Audio: Colors",
+              "audio_vu_meter": "Audio: VU meter",
+              "audio_spectrum_analyzer": "Audio: Spectrum",
+              "audio_knight_rider_clockwise": "Audio: Scanner clockwise",
+              "audio_knight_rider_alternating": "Audio: Scanner alternating",
+              "audio_random_pixel_flash": "Audio: Random flash",
+              "audio_strobe": "Audio: Strobe",
               "audio_party": "Audio: Party"
             }
           }
@@ -80,47 +79,34 @@
   },
   "exceptions": {
     "command_failed": {
-      "message": "Der Fernseher hat den Befehl nicht angenommen: {error}"
+      "message": "The TV did not accept the command: {error}"
     },
     "hold_not_supported": {
-      "message": "Der Fernseher kann Tasten nicht gedrückt halten."
-    },
-    "invalid_media_type": {
-      "message": "Abspielbar sind nur Sender, nicht {media_type}."
-    },
-    "invalid_source": {
-      "message": "{source} ist nicht auswählbar, nur Home und Live TV."
+      "message": "The TV cannot hold keys."
     },
     "no_ambilight_off": {
-      "message": "Das Einstellungsmenü des Fernsehers hat keinen Eintrag, um Ambilight auszuschalten."
-    },
-    "no_channels": {
-      "message": "Der Fernseher hat keine Sender."
+      "message": "The TV's settings menu has no entry to switch Ambilight off."
     },
     "no_mac": {
-      "message": "Der Fernseher kann nicht eingeschaltet werden: Beim Koppeln wurde keine Netzwerkschnittstelle mit Wake-on-LAN gefunden."
-    },
-    "unknown_channel": {
-      "message": "Der Fernseher hat keinen Sender {channel}."
+      "message": "The TV cannot be switched on: pairing found no network interface with Wake-on-LAN."
     },
     "unknown_effect": {
-      "message": "Der Fernseher hat keinen Ambilight-Stil {effect}."
+      "message": "The TV has no Ambilight style {effect}."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Validated TV capabilities",
-        "description": "Enable only after observing the result on this TV. HTTP 200, MQTT login and a running DIAL app do not prove screen power. Powerstate must be checked while ON and in quick standby. See README for the validation procedure. Enable remote_testing temporarily for authorized tests via remote.send_command; enable WOL to test it, then disable it if unsuccessful.",
+        "title": "TV settings",
+        "description": "Remote and media controls are enabled by default. No test mode or repeated pairing is needed. Enable optional DIAL and Ambilight only if supported by your TV. Trust power/mute readings only if they track the physical TV: a reachable API does not prove the screen is on.",
         "data": {
-          "keys_verified": "Volume and Standby keys tested on this TV",
-          "wol_verified": "Enable Wake-on-LAN (hardware validation required)",
-          "powerstate_verified": "Powerstate endpoint follows the physical screen in standby",
-          "mute_state_verified": "Mute reading follows physical remote",
-          "ambilight_verified": "Ambilight confirmed working on this firmware",
-          "broadcast": "WOL IPv4 broadcast address",
-          "dial_verified": "Enable local DIAL apps (validate on this TV)",
-          "remote_testing": "Remote hardware test mode (may interrupt the TV)"
+          "enable_controls": "Enable remote and media controls",
+          "enable_wol": "Enable Wake-on-LAN",
+          "enable_dial": "Enable local DIAL applications",
+          "enable_ambilight": "Enable Ambilight",
+          "trust_powerstate": "Trust the TV powerstate reading",
+          "trust_mute_state": "Trust the TV mute reading",
+          "broadcast": "Wake-on-LAN IPv4 broadcast address"
         }
       }
     },

@@ -44,13 +44,8 @@ class TitanOSRemote(TitanOSEntity, RemoteEntity):
         super().__init__(coordinator, "remote")
 
     def _require_remote_enabled(self) -> None:
-        """Unverified keys require an explicit user-controlled test mode."""
-        options = self.coordinator.config_entry.options
-        if not (options.get("keys_verified") or options.get("remote_testing")):
-            raise ServiceValidationError(
-                "Remote keys are not validated; enable remote testing in options "
-                "for an authorized hardware test"
-            )
+        """Normal production commands do not require a validation/test flag."""
+        self.coordinator.ensure_controls_enabled()
 
     @property
     @override

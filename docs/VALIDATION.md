@@ -1,61 +1,68 @@
-# Validação executada — candidato 0.2.0
+# Validation and release evidence
 
-## Ambiente real de execução dos testes
+## Reproducible software checks
 
-- Python 3.14.9, Linux; dependências instaladas via `uv sync --group dev`.
-- Home Assistant **2026.10.1**, pytest-homeassistant-custom-component **0.13.372**.
-- Ruff **0.16.6**; versões transitivas fixadas em `uv.lock`.
-- Baseline upstream antes de alterações: **57 passed**.
-- Suite candidata: **99 passed**, **0 failures**, **0 errors** (JUnit confirmado).
-- `uv run ruff check .`: **No issues found**.
-- `uv run ruff format --check .`: **33 files already formatted**.
-- `git diff --check`: sem erros.
-- Pesquisa por formatos de tokens GitHub/OpenAI e chaves privadas: zero resultados.
-  A constante pública de interoperabilidade JointSpace herdada não é uma credencial
-  pessoal; nenhum PIN/auth key real foi usado, guardado ou publicado.
+```bash
+uv sync --locked --group dev
+uv run ruff check .
+uv run ruff format --check .
+uv run pytest -q --junitxml=test-results.xml
+```
 
-## O que os testes demonstram
+Python 3.14.9 is pinned in `.python-version`; the development lock uses Home
+Assistant 2026.10.1. CI additionally runs hassfest and HACS repository validation.
+Exact results for version 1.0.0 must be taken from its CI run and JUnit output,
+not copied from the preceding version. See the published release/PR checks.
 
-- Config flow: pairing manual/zeroconf, PIN válido/inválido, reauth e mudança de IP.
-- Regressão: Cast fechado não bloqueia pairing nem causa discard do Standby.
-- Reintrodução temporária do gate Cast → teste **falhou** com `tv_off`.
-  Restauro da correção → suite completa **99 passed**. A regressão deteta o bug.
-- Setup, unload e reload com preservação da Config Entry e sem pedir novo PIN.
-- Payload/método/path, middleware Digest, timeout e erros HTTP ao nível do cliente.
-- JSON inválido/tipos inesperados; HTTP 200 com erro semântico não é aceitação.
-- Segredos de pairing não aparecem nos logs DEBUG; diagnósticos usam allowlist.
-- Rede: backoff, indisponibilidade, recuperação e endpoints opcionais recusados.
-- Máquina de estados: intenção não vira prova; unknown versus unavailable;
-  standby duplicado/concorrente/timeout; WOL validado pelos bytes do magic packet.
-- Remote: ordem, delay, aliases, repetição, recusa de hold e guard de energia.
-- Ambilight: estilos, cores, menu, indisponibilidade e ausência de auto-restore.
-- DIAL: XML namespaced, limites de corpo, rejeição de entidades XML, Origin,
-  erros/timeouts e serviço HA de lançamento de registo detetado com opt-in.
-- Opções alteram funcionalidades sem tocar nas credenciais existentes.
+The preceding 0.2.0 revision `ae0f4e67ad1c4f280cc5704fa7838cecc4e0ef8f`
+passed 99 tests, Ruff, hassfest and HACS in
+[run 42846542436](https://github.com/ruisilva-bit/ha-titanOS/actions/runs/42846542436).
+That evidence describes the old revision only.
 
-Os testes usam mocks explícitos; não são capturas da 55PUS8079/12 e não provam que
-um comando aceite pelo HTTP foi executado fisicamente.
+## Test boundaries
 
-## Validação externa / hardware
+Tests exercise HA config/options flows, credential preservation, pairing without
+Cast, HA service dispatch, default production controls and explicit opt-out,
+legacy-option compatibility, DIAL discovery/launch, backoff and recovery,
+malformed grants, diagnostics, request concurrency and ambiguous Standby guards.
+They use simulated network clients unless a test explicitly creates a local
+in-process endpoint. They do not operate the user's TV.
 
-- Pesquisa mDNS limitada neste host, cinco segundos: nenhum anúncio Philips/MQTT.
-  Isso não prova ausência de serviços numa VLAN diferente.
-- Não foi fornecido IP da TV nem versão da instalação Home Assistant do Rui.
-- Não foi enviado Standby, WOL, alteração de input, launch, pairing, reset ou
-  qualquer outro comando à TV real. Nenhuma configuração UniFi foi alterada.
-- HACS e hassfest estão configurados em GitHub Actions; resultados do PR devem
-  ser consultados no head exato. Não são declarados aprovados antes dessa execução.
-- Revisão independente executada (sa-0-9f3834f3). Corrigidos: gate explícito
-  de testes remotos e validação de auth_key da resposta de grant. Oito testes
-  adicionais passam. O risco residual TLS é explícito no README: certificado
-  autoassinado sem autenticação do servidor; usar LAN confiável, sem exposição.
-- Primeira execução HACS falhou por faltar descrição/topics no repositório;
-  metadados corrigidos e relidos. Hassfest aprovou o primeiro head. Os resultados
-  finais devem ser lidos no head atualizado; nenhuma falha foi ignorada.
+The dashboard example is parsed and its remote button payloads are executed
+against registered HA services with mocked TV I/O. The generator validates entity
+IDs. This proves service-schema/allowlist compatibility, not browser appearance,
+phone ergonomics, TV-key effects or Plex launch.
 
-## Gate de release estável
+## Read-only hardware procedure
 
-Pendente: confirmar HA instalado, firmware, deteção LAN, prova de power nos vários
-estados e ensaios físicos autorizados de comandos/WOL/Ambilight/DIAL. Até isso,
-a entrega é um **candidato instalável para validação**, não certificação de todos
-os critérios de hardware do pedido original. Ver `ACCEPTANCE.md`.
+```bash
+python3 tools/probe_tv.py TV_IP
+python3 tools/probe_tv.py TV_IP --paired
+```
+
+Use only the authorized single TV address. The tool does not scan a subnet,
+issue control writes, save credentials or dump bodies. Existing pairing inputs
+are masked. Keep credentials, QR codes and `.storage` out of issues/chat.
+
+For each actual screen state, record only sanitized status: TCP/TLS, authenticated
+system reachability, powerstate and mute observations, DIAL registrations and
+whether values track the physical remote. Reaching JointSpace does not prove
+on; a network failure does not establish deep standby. DIAL `running` is not a
+foreground-app signal.
+
+## Controlled write procedure
+
+Obtain permission first. Send a single harmless navigation/volume key and observe
+its physical effect. Test mute independently. Test Standby once when interruption
+is acceptable. Never retry automatically after timeout: the write may have
+executed. The latch remains until a reliable subsequent on observation or a
+manual integration reload after checking the screen. WOL sends intent only.
+Confirm application launch and reconnect behaviour separately.
+
+## Update and rollback
+
+Retain the old component directory and a private HA backup. Replace only the
+component folder and restart in an approved window. Keep the existing config
+entry; compare unique IDs/entities and verify no pairing request occurred.
+Rollback uses the complete previous folder or private HA backup, not fabricated
+credential migration. Ensure HACS has a single owning repository.

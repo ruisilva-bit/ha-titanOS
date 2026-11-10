@@ -5,6 +5,7 @@ from typing import Any
 from homeassistant.core import HomeAssistant
 
 from .coordinator import TitanOSConfigEntry
+from .settings import DEFAULT_OPTIONS, option_enabled
 
 
 async def async_get_config_entry_diagnostics(
@@ -16,7 +17,7 @@ async def async_get_config_entry_diagnostics(
         "protocol": "jointspace_v6_https_digest",
         "connected": coordinator.last_update_success,
         "power_evidence": coordinator.power.state.value,
-        "power_trusted": bool(entry.options.get("powerstate_verified")),
+        "power_trusted": option_enabled(entry.options, "trust_powerstate"),
         "last_success": coordinator.last_success,
         "last_error": coordinator.last_error,
         "consecutive_failures": coordinator.failures,
@@ -24,12 +25,6 @@ async def async_get_config_entry_diagnostics(
         "unsupported_endpoints": sorted(coordinator.optional_unavailable),
         "standby_unconfirmed": coordinator.power.uncertain_standby_sent,
         "capabilities": {
-            key: bool(entry.options.get(key))
-            for key in (
-                "keys_verified",
-                "wol_verified",
-                "mute_state_verified",
-                "ambilight_verified",
-            )
+            key: option_enabled(entry.options, key) for key in DEFAULT_OPTIONS
         },
     }

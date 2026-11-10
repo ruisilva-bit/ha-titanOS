@@ -44,7 +44,11 @@ async def test_safe_defaults(hass, config_entry, mock_client):
     await hass.config_entries.async_setup(config_entry.entry_id)
     await hass.async_block_till_done()
     assert hass.states.get(ENTITY).state == STATE_UNKNOWN
-    assert hass.states.get(ENTITY).attributes["supported_features"] == 0
+    assert hass.states.get(ENTITY).attributes["supported_features"] == (
+        MediaPlayerEntityFeature.TURN_ON
+        | MediaPlayerEntityFeature.TURN_OFF
+        | MediaPlayerEntityFeature.VOLUME_STEP
+    )
     assert hass.states.get("light.43pus8400_12_ambilight") is None
     mock_client.get_power_state.assert_not_awaited()
     mock_client.is_on.assert_not_awaited()

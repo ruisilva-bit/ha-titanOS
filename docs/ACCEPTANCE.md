@@ -1,31 +1,37 @@
-# Critérios de aceitação e gates restantes
+# Acceptance matrix
 
-| Critério | Verificação automatizada | Gate físico / ambiente do Rui |
+Production-mode software must not be confused with physical-TV certification.
+No TV address or actual installed HA version has been supplied to this checkout.
+
+| Requirement | Software contract | Physical target evidence |
 |---|---|---|
-| Carrega em HA | Setup/unload/reload em HA 2026.10.1 com mocks | Confirmar versão instalada e arranque sem erros |
-| Pairing sem 8009 | Regressão com Cast fechado, PIN válido/inválido | Relato anterior do Rui positivo; não repetir pairing sem necessidade |
-| Estado real | Unknown por defeito; evidência explícita; transições e rede separadas | Comparar powerstate com ecrã ligado, standby rápido/prolongado |
-| Comandos principais | Método/path/payload Digest e serviços HA; aliases e sequências | Observar efeito de cada tecla; 200 não chega |
-| Desligar/WOL | Guard de toggle, concorrência, timeout e magic packet | Autorização prévia + ensaios físicos + MAC/VLAN |
-| Sem controlos falsos | Feature bits dinâmicos; sem volume absoluto/HDMI fictício | Ativar apenas opções comprovadas no firmware |
-| Recuperação | Backoff 60/120 s, reset 30 s e preservação de pairing | Desconexão autorizada ou natural; confirmar regresso |
-| Testes/documentação | Pytest, Ruff e CI HACS/hassfest | Registar logs sanitizados e versão firmware |
-| LAN sem cloud | JointSpace, WOL e DIAL só host configurado | Ensaio com WAN bloqueada só se Rui autorizar alteração de rede |
-| Sem firmware/bypass | Nenhum código de factory reset/firmware; pairing normal | Não aplicável; nenhuma alteração feita na TV |
+| Pair with TCP 8009 closed | Cast is not a pairing prerequisite; regression test. | User reports successful pairing with that gate removed. |
+| Preserve pairing | Domain, entry version 1, credentials and unique IDs retained. | Update/reload must still be observed on the user's HA. |
+| Detect lit screen | Unknown unless trustworthy powerstate is enabled and available. | Not verified; HTTP 200 is insufficient. |
+| Standby | Authenticated preflight; serialized single write; latch before ambiguous completion. | Not verified; user hit the former local validation gate before a write. |
+| Wake | Async WOL to validated stored MAC; intent is not confirmation. | Delivery/wake not verified. |
+| Volume steps | Normal remote/media services enabled without test mode. | Physical effect not verified. |
+| Mute | Remote toggle; media mute requires a trusted reading. | Physical effect/read accuracy not verified. |
+| Navigation/Home/Back/OK | Allowlisted JointSpace keys and aliases. | Per-key effect not verified. |
+| Ambilight | Optional, discovered feature/style/menu support. | Not verified on target. |
+| Apps | Optional DIAL; only detected YouTube/Netflix/AmazonInstantVideo. | Registration and launch not verified. |
+| Plex | No unsupported shortcut or launch claim. | Not implemented/confirmed. |
+| Direct HDMI | Source menu key; no invented direct-input mapping. | Direct selection not confirmed. |
+| Dashboard | Native card YAML, registered-service payload tests and generator. | Frontend rendering/mobile layout not observed on the user's HA. |
+| English | English UI for every bundled locale, docs and examples. | HA's own core language remains outside integration control. |
+| Security | Secrets excluded from diagnostics; serialized requests; no write retries. | Server TLS identity is not verified; trusted LAN is required. |
+| Matter | Can coexist; no automatic entity merge. | User tried it and found limited functions. |
 
-## Como registar prova real
+## Physical sign-off still required
 
-Usar a ferramenta de leitura descrita no README. Registar estado físico observado,
-hora, firmware, código HTTP, endpoint e resultado visível. Não guardar auth keys,
-PINs, tokens, contas ou dumps de configuração. Para comandos, usar uma linha por
-ensaio e distinguir explicitamente pedido aceite de ação executada.
+With an approved maintenance window, compare observations with the actual screen
+on, in quick standby and prolonged standby. Use a read-only baseline first.
+Check volume/mute/navigation individually and note accepted/refused keys. Obtain
+permission before Standby/WOL or other disruptive commands. Stop on unreliable
+TLS; do not turn an ambiguous write into an automatic retry.
 
-Exemplo de **formato**, não resultado fictício:
-
-| Cenário observado | Endpoint/comando | HTTP | Efeito visual | Conclusão |
-|---|---|---|---|---|
-| preencher após teste real | preencher | preencher | preencher | confirmado / inconclusivo |
-
-A entrega do código instalável e dos testes simulados não encerra os gates de
-hardware nem autoriza comandos que interrompam a utilização da TV. Não é ainda
-uma declaração de integração estável e completamente validada na 55PUS8079/12.
+Only enable trust in power/mute readings when they track the physical remote.
+Only enable DIAL/Ambilight after checking applicability. Verify reconnect,
+authentication failure, HA restart, entity availability and rollback without
+re-pairing. Record firmware/HA versions without credentials or serial dumps.
+A successful CI run cannot replace these acceptance observations.

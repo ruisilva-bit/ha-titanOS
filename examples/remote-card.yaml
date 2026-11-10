@@ -1,0 +1,758 @@
+type: vertical-stack
+cards:
+- type: markdown
+  content: '## Philips TV Remote
+
+    Local control · Titan OS'
+- type: grid
+  columns: 3
+  square: false
+  cards:
+  - type: button
+    name: Wake
+    icon: mdi:power-on
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.turn_on
+      target:
+        entity_id: remote.your_tv
+      confirmation:
+        title: TV power
+        text: Send this power command to the TV?
+        confirm_text: Send command
+        dismiss_text: Cancel
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Sources
+    icon: mdi:video-input-hdmi
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Source
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Standby
+    icon: mdi:power-standby
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.turn_off
+      target:
+        entity_id: remote.your_tv
+      confirmation:
+        title: TV power
+        text: Send this power command to the TV?
+        confirm_text: Send command
+        dismiss_text: Cancel
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+- type: grid
+  columns: 3
+  square: false
+  cards:
+  - type: button
+    name: Home
+    icon: mdi:home
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Home
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Back
+    icon: mdi:arrow-u-left-top
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Back
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Options
+    icon: mdi:dots-horizontal
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Options
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+- type: grid
+  columns: 3
+  square: false
+  cards:
+  - &id001
+    type: button
+    show_name: false
+    show_icon: false
+    tap_action:
+      action: none
+    hold_action:
+      action: none
+  - type: button
+    name: Up
+    icon: mdi:chevron-up
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - CursorUp
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - *id001
+  - type: button
+    name: Left
+    icon: mdi:chevron-left
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - CursorLeft
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: OK
+    icon: mdi:checkbox-marked-circle-outline
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Confirm
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Right
+    icon: mdi:chevron-right
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - CursorRight
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - *id001
+  - type: button
+    name: Down
+    icon: mdi:chevron-down
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - CursorDown
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - *id001
+- type: grid
+  columns: 3
+  square: false
+  cards:
+  - type: button
+    name: Volume -
+    icon: mdi:volume-minus
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - VolumeDown
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Mute
+    icon: mdi:volume-mute
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Mute
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Volume +
+    icon: mdi:volume-plus
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - VolumeUp
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+- type: grid
+  columns: 3
+  square: false
+  cards:
+  - type: button
+    name: Channel -
+    icon: mdi:minus
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - ChannelStepDown
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Info
+    icon: mdi:information-outline
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Info
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Channel +
+    icon: mdi:plus
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - ChannelStepUp
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+- type: grid
+  columns: 3
+  square: false
+  cards:
+  - type: button
+    name: Rewind
+    icon: mdi:rewind
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Rewind
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Play
+    icon: mdi:play
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Play
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Pause
+    icon: mdi:pause
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Pause
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Stop
+    icon: mdi:stop
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Stop
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Forward
+    icon: mdi:fast-forward
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - FastForward
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: Live TV
+    icon: mdi:television
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - WatchTV
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+- type: grid
+  columns: 3
+  square: false
+  cards:
+  - type: button
+    name: '1'
+    icon: mdi:numeric-1
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit1
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: '2'
+    icon: mdi:numeric-2
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit2
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: '3'
+    icon: mdi:numeric-3
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit3
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: '4'
+    icon: mdi:numeric-4
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit4
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: '5'
+    icon: mdi:numeric-5
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit5
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: '6'
+    icon: mdi:numeric-6
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit6
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: '7'
+    icon: mdi:numeric-7
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit7
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: '8'
+    icon: mdi:numeric-8
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit8
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: '9'
+    icon: mdi:numeric-9
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit9
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+  - type: button
+    name: '0'
+    icon: mdi:numeric-0
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - Digit0
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+- type: grid
+  columns: 4
+  square: false
+  cards:
+  - type: button
+    name: Red
+    icon: mdi:circle
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - RedColour
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    color: red
+  - type: button
+    name: Green
+    icon: mdi:circle
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - GreenColour
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    color: green
+  - type: button
+    name: Yellow
+    icon: mdi:circle
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - YellowColour
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    color: yellow
+  - type: button
+    name: Blue
+    icon: mdi:circle
+    show_state: false
+    icon_height: 28px
+    tap_action:
+      action: perform-action
+      perform_action: remote.send_command
+      target:
+        entity_id: remote.your_tv
+      data:
+        command:
+        - BlueColour
+        num_repeats: 1
+        delay_secs: 0.3
+    hold_action:
+      action: none
+    double_tap_action:
+      action: none
+    color: blue
+- type: media-control
+  entity: media_player.your_tv

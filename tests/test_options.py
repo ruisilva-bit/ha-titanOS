@@ -13,9 +13,9 @@ async def test_options(hass, config_entry, mock_client):
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
         {
-            "keys_verified": True,
+            "enable_controls": True,
             "broadcast": "192.0.2.255",
-            "powerstate_verified": False,
+            "trust_powerstate": False,
         },
     )
     assert result["type"] == FlowResultType.CREATE_ENTRY

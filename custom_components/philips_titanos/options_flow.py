@@ -1,4 +1,4 @@
-"""User-confirmed capabilities; never guess model compatibility."""
+"""Production options; controls work without experimental validation switches."""
 
 from ipaddress import IPv4Address
 from typing import Any
@@ -7,24 +7,16 @@ import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlowResult, OptionsFlow
 
-CAPABILITIES = (
-    "remote_testing",
-    "dial_verified",
-    "keys_verified",
-    "wol_verified",
-    "powerstate_verified",
-    "mute_state_verified",
-    "ambilight_verified",
-)
+from .settings import DEFAULT_OPTIONS, option_enabled
 
 
 class TitanOSOptionsFlow(OptionsFlow):
-    """Enable controls only following observed hardware validation."""
+    """Configure normal controls and optional firmware-specific features."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Store options separately, preserving all existing pairing data."""
+        """Store preferences without changing the existing pairing credentials."""
         errors = {}
         if user_input is not None:
             try:
@@ -34,9 +26,9 @@ class TitanOSOptionsFlow(OptionsFlow):
             else:
                 return self.async_create_entry(title="", data=user_input)
         defaults = self.config_entry.options
-        schema = {
-            vol.Optional(key, default=defaults.get(key, False)): bool
-            for key in CAPABILITIES
+        schema: dict[Any, Any] = {
+            vol.Optional(key, default=option_enabled(defaults, key)): bool
+            for key in DEFAULT_OPTIONS
         }
         schema[
             vol.Optional(
