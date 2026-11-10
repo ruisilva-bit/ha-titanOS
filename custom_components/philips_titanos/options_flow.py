@@ -8,6 +8,7 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigFlowResult, OptionsFlow
 
 CAPABILITIES = (
+    "remote_testing",
     "dial_verified",
     "keys_verified",
     "wol_verified",

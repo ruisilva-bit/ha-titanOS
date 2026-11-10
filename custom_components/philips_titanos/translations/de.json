@@ -119,7 +119,8 @@
           "mute_state_verified": "Mute reading follows physical remote",
           "ambilight_verified": "Ambilight confirmed working on this firmware",
           "broadcast": "WOL IPv4 broadcast address",
-          "dial_verified": "Enable local DIAL apps (validate on this TV)"
+          "dial_verified": "Enable local DIAL apps (validate on this TV)",
+          "remote_testing": "Remote hardware test mode (may interrupt the TV)"
         }
       }
     },

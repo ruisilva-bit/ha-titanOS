@@ -118,7 +118,8 @@
           "mute_state_verified": "Leitura de mute acompanha o comando físico",
           "ambilight_verified": "Ambilight confirmado neste firmware",
           "broadcast": "Endereço IPv4 de broadcast para WOL",
-          "dial_verified": "Ativar aplicações DIAL (validar na TV)"
+          "dial_verified": "Ativar aplicações DIAL (validar na TV)",
+          "remote_testing": "Modo de teste remoto (pode interromper a TV)"
         }
       }
     },

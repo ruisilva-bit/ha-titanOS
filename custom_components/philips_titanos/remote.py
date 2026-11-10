@@ -43,6 +43,15 @@ class TitanOSRemote(TitanOSEntity, RemoteEntity):
         """Initialize the remote."""
         super().__init__(coordinator, "remote")
 
+    def _require_remote_enabled(self) -> None:
+        """Unverified keys require an explicit user-controlled test mode."""
+        options = self.coordinator.config_entry.options
+        if not (options.get("keys_verified") or options.get("remote_testing")):
+            raise ServiceValidationError(
+                "Remote keys are not validated; enable remote testing in options "
+                "for an authorized hardware test"
+            )
+
     @property
     @override
     def is_on(self) -> bool | None:
@@ -57,11 +66,13 @@ class TitanOSRemote(TitanOSEntity, RemoteEntity):
     @override
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Put the TV into standby."""
+        self._require_remote_enabled()
         await self.coordinator.async_turn_off()
 
     @override
     async def async_send_command(self, command: Iterable[str], **kwargs: Any) -> None:
         """Send JointSpace key names such as CursorUp or Confirm."""
+        self._require_remote_enabled()
         if kwargs.get(ATTR_HOLD_SECS):
             raise ServiceValidationError(
                 translation_domain=DOMAIN, translation_key="hold_not_supported"

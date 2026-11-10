@@ -102,6 +102,11 @@ Uma falha de rede não distingue deep standby de TV desligada da corrente.
 
 ### 2. Teclas (apenas numa janela autorizada)
 
+Nas opções, ativar temporariamente `remote_testing` antes dos primeiros ensaios.
+Por defeito o remote recusa teclas/desligar enquanto não houver validação nem
+modo de teste explícito. Depois de validar, ativar `keys_verified` e desligar
+`remote_testing`. Ligar por WOL exige sempre a sua opção própria.
+
 Ferramentas de Programador → Ações:
 
 ```yaml
@@ -132,6 +137,7 @@ explicitamente o teste. Recarregar nunca deve ser usado como retry automático.
 
 | Opção | Quando ativar |
 |---|---|
+| `remote_testing` | Ativar temporariamente para ensaios explícitos autorizados via remote; não significa suporte confirmado. |
 | `keys_verified` | Após volume e Standby terem efeito visual confirmado. Mostra volume ± e desligar no media player. |
 | `wol_verified` | Ativar para ensaio autorizado de WOL; manter só se o ecrã ligar. Precisa de MAC com WOL indicado pela TV. |
 | `broadcast` | Broadcast IPv4 da VLAN da TV, quando necessário. Não alterar router/firewall sem autorização. |

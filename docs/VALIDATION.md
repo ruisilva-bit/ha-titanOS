@@ -6,9 +6,9 @@
 - Home Assistant **2026.10.1**, pytest-homeassistant-custom-component **0.13.372**.
 - Ruff **0.16.6**; versões transitivas fixadas em `uv.lock`.
 - Baseline upstream antes de alterações: **57 passed**.
-- Suite candidata: **91 passed**, **0 failures**, **0 errors** (JUnit confirmado).
+- Suite candidata: **99 passed**, **0 failures**, **0 errors** (JUnit confirmado).
 - `uv run ruff check .`: **No issues found**.
-- `uv run ruff format --check .`: **31 files already formatted**.
+- `uv run ruff format --check .`: **32 files already formatted**.
 - `git diff --check`: sem erros.
 - Pesquisa por formatos de tokens GitHub/OpenAI e chaves privadas: zero resultados.
   A constante pública de interoperabilidade JointSpace herdada não é uma credencial
@@ -19,7 +19,7 @@
 - Config flow: pairing manual/zeroconf, PIN válido/inválido, reauth e mudança de IP.
 - Regressão: Cast fechado não bloqueia pairing nem causa discard do Standby.
 - Reintrodução temporária do gate Cast → teste **falhou** com `tv_off`.
-  Restauro da correção → suite completa **91 passed**. A regressão deteta o bug.
+  Restauro da correção → suite completa **99 passed**. A regressão deteta o bug.
 - Setup, unload e reload com preservação da Config Entry e sem pedir novo PIN.
 - Payload/método/path, middleware Digest, timeout e erros HTTP ao nível do cliente.
 - JSON inválido/tipos inesperados; HTTP 200 com erro semântico não é aceitação.
@@ -45,8 +45,13 @@ um comando aceite pelo HTTP foi executado fisicamente.
   qualquer outro comando à TV real. Nenhuma configuração UniFi foi alterada.
 - HACS e hassfest estão configurados em GitHub Actions; resultados do PR devem
   ser consultados no head exato. Não são declarados aprovados antes dessa execução.
-- Revisão independente solicitada; eventuais correções e contagem final podem
-  atualizar este relatório antes de entrega.
+- Revisão independente executada (sa-0-9f3834f3). Corrigidos: gate explícito
+  de testes remotos e validação de auth_key da resposta de grant. Oito testes
+  adicionais passam. O risco residual TLS é explícito no README: certificado
+  autoassinado sem autenticação do servidor; usar LAN confiável, sem exposição.
+- Primeira execução HACS falhou por faltar descrição/topics no repositório;
+  metadados corrigidos e relidos. Hassfest aprovou o primeiro head. Os resultados
+  finais devem ser lidos no head atualizado; nenhuma falha foi ignorada.
 
 ## Gate de release estável
 

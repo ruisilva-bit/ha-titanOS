@@ -269,7 +269,10 @@ class TitanOSClient:
         if not isinstance(data, dict) or data.get("error_id") != "SUCCESS":
             self._auth = None
             raise PairingError("Pairing rejected")
-        auth_key = data.get("auth_key") or pairing.auth_key
+        auth_key = data.get("auth_key", pairing.auth_key)
+        if not isinstance(auth_key, str) or not auth_key:
+            self._auth = None
+            raise PairingError("Invalid pairing credentials response")
         self.set_credentials(pairing.device_id, auth_key)
         return auth_key
 
