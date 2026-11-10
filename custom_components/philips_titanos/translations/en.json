@@ -10,8 +10,7 @@
     },
     "error": {
       "cannot_connect": "Failed to connect",
-      "invalid_pin": "The PIN was wrong or has expired. A new PIN is now shown on the TV.",
-      "tv_off": "The TV is in standby. Switch it on and submit again."
+      "invalid_pin": "The PIN was wrong or has expired. A new PIN is now shown on the TV."
     },
     "flow_title": "{name}",
     "step": {
@@ -85,23 +84,11 @@
     "hold_not_supported": {
       "message": "The TV cannot hold keys."
     },
-    "invalid_media_type": {
-      "message": "Only channels can be played, not {media_type}."
-    },
-    "invalid_source": {
-      "message": "{source} cannot be selected; only Home and Live TV can."
-    },
     "no_ambilight_off": {
       "message": "The TV's settings menu has no entry to switch Ambilight off."
     },
-    "no_channels": {
-      "message": "The TV has no channels."
-    },
     "no_mac": {
       "message": "The TV cannot be switched on: pairing found no network interface with Wake-on-LAN."
-    },
-    "unknown_channel": {
-      "message": "The TV has no channel {channel}."
     },
     "unknown_effect": {
       "message": "The TV has no Ambilight style {effect}."
@@ -110,17 +97,16 @@
   "options": {
     "step": {
       "init": {
-        "title": "Validated TV capabilities",
-        "description": "Enable only after observing the result on this TV. HTTP 200, MQTT login and a running DIAL app do not prove screen power. Powerstate must be checked while ON and in quick standby. See README for the validation procedure. Enable remote_testing temporarily for authorized tests via remote.send_command; enable WOL to test it, then disable it if unsuccessful.",
+        "title": "TV settings",
+        "description": "Remote and media controls are enabled by default. No test mode or repeated pairing is needed. Enable optional DIAL and Ambilight only if supported by your TV. Trust power/mute readings only if they track the physical TV: a reachable API does not prove the screen is on.",
         "data": {
-          "keys_verified": "Volume and Standby keys tested on this TV",
-          "wol_verified": "Enable Wake-on-LAN (hardware validation required)",
-          "powerstate_verified": "Powerstate endpoint follows the physical screen in standby",
-          "mute_state_verified": "Mute reading follows physical remote",
-          "ambilight_verified": "Ambilight confirmed working on this firmware",
-          "broadcast": "WOL IPv4 broadcast address",
-          "dial_verified": "Enable local DIAL apps (validate on this TV)",
-          "remote_testing": "Remote hardware test mode (may interrupt the TV)"
+          "enable_controls": "Enable remote and media controls",
+          "enable_wol": "Enable Wake-on-LAN",
+          "enable_dial": "Enable local DIAL applications",
+          "enable_ambilight": "Enable Ambilight",
+          "trust_powerstate": "Trust the TV powerstate reading",
+          "trust_mute_state": "Trust the TV mute reading",
+          "broadcast": "Wake-on-LAN IPv4 broadcast address"
         }
       }
     },

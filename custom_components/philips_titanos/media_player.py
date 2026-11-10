@@ -20,6 +20,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from .coordinator import TitanOSConfigEntry, TitanOSCoordinator
 from .entity import TitanOSEntity
+from .settings import option_enabled
 
 PARALLEL_UPDATES = 1
 
@@ -77,18 +78,19 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
         """Offer stop and channel stepping only in live TV."""
         options = self.coordinator.config_entry.options
         features = MediaPlayerEntityFeature(0)
-        if options.get("keys_verified"):
-            features |= MediaPlayerEntityFeature.VOLUME_STEP
-            # Standby must remain callable even when power is unknown.
-            features |= MediaPlayerEntityFeature.TURN_OFF
-            if (
-                options.get("mute_state_verified")
-                and self.coordinator.data.muted is not None
-            ):
-                features |= MediaPlayerEntityFeature.VOLUME_MUTE
-        if options.get("wol_verified") and self.coordinator.config_entry.data.get(
-            CONF_MAC
+        if not option_enabled(options, "enable_controls"):
+            return features
+        features |= MediaPlayerEntityFeature.VOLUME_STEP
+        # Standby remains callable even when screen power is unknown.
+        features |= MediaPlayerEntityFeature.TURN_OFF
+        if (
+            option_enabled(options, "trust_mute_state")
+            and self.coordinator.data.muted is not None
         ):
+            features |= MediaPlayerEntityFeature.VOLUME_MUTE
+        if option_enabled(
+            options, "enable_wol"
+        ) and self.coordinator.config_entry.data.get(CONF_MAC):
             features |= MediaPlayerEntityFeature.TURN_ON
         if self.coordinator.dial_apps:
             features |= MediaPlayerEntityFeature.PLAY_MEDIA
@@ -112,8 +114,9 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
         self, media_type: MediaType | str, media_id: str, **kwargs: Any
     ) -> None:
         """Launch an opted-in registered DIAL app, with no power-state optimism."""
+        self.coordinator.ensure_controls_enabled()
         if media_type != MediaType.APP or media_id not in self.coordinator.dial_apps:
-            raise HomeAssistantError("Application is not a validated DIAL registration")
+            raise HomeAssistantError("Application is not a detected DIAL registration")
         if self.coordinator.dial is None:
             raise HomeAssistantError("DIAL is not configured")
         await self.coordinator.async_command(self.coordinator.dial.launch(media_id))
@@ -157,6 +160,7 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
     @override
     async def async_volume_up(self) -> None:
         """Raise the volume by one step."""
+        self.coordinator.ensure_controls_enabled()
         await self.coordinator.async_command(
             self.coordinator.client.send_key("VolumeUp")
         )
@@ -164,6 +168,7 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
     @override
     async def async_volume_down(self) -> None:
         """Lower the volume by one step."""
+        self.coordinator.ensure_controls_enabled()
         await self.coordinator.async_command(
             self.coordinator.client.send_key("VolumeDown")
         )
@@ -171,6 +176,7 @@ class TitanOSMediaPlayer(TitanOSEntity, MediaPlayerEntity):
     @override
     async def async_mute_volume(self, mute: bool) -> None:
         """Mute or unmute with the remote's mute key, which toggles."""
+        self.coordinator.ensure_controls_enabled()
         if self.coordinator.data.muted is None:
             raise HomeAssistantError(
                 "Mute state unknown; use explicit remote Mute toggle"

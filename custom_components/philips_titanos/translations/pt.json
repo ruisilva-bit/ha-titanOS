@@ -1,16 +1,16 @@
 {
   "config": {
     "abort": {
-      "already_configured": "O dispositivo já está configurado",
-      "cannot_connect": "Não foi possível ligar à TV",
-      "not_supported": "Este dispositivo não é uma Philips com Titan OS.",
-      "reauth_successful": "Reautenticação concluída",
-      "reconfigure_successful": "Reconfiguração concluída",
-      "unique_id_mismatch": "Esta TV é diferente da TV configurada."
+      "already_configured": "Device is already configured",
+      "cannot_connect": "Failed to connect",
+      "not_supported": "This device is not a Philips TV with Titan OS.",
+      "reauth_successful": "Re-authentication was successful",
+      "reconfigure_successful": "Reconfiguration was successful",
+      "unique_id_mismatch": "This is a different TV than the one configured."
     },
     "error": {
-      "cannot_connect": "Não foi possível ligar à TV",
-      "invalid_pin": "O PIN é inválido ou expirou. É apresentado um novo PIN na TV."
+      "cannot_connect": "Failed to connect",
+      "invalid_pin": "The PIN was wrong or has expired. A new PIN is now shown on the TV."
     },
     "flow_title": "{name}",
     "step": {
@@ -19,35 +19,35 @@
           "pin": "PIN"
         },
         "data_description": {
-          "pin": "PIN apresentado na TV; pode expirar em 30 segundos."
+          "pin": "The PIN shown on the TV. It is valid for 30 seconds."
         },
-        "description": "Introduz o PIN apresentado em {name}."
+        "description": "Enter the PIN shown on {name}."
       },
       "reauth_confirm": {
-        "description": "{name} já não aceita as credenciais. Liga a TV e continua para emparelhar.",
-        "title": "Emparelhar novamente"
+        "description": "{name} no longer accepts the stored credentials. Switch the TV on and submit to pair again.",
+        "title": "Pair again"
       },
       "reconfigure": {
         "data": {
-          "host": "Endereço da TV"
+          "host": "Host"
         },
         "data_description": {
           "host": "The hostname or IP address of the TV."
         },
-        "description": "Altera o endereço sem repetir o emparelhamento."
+        "description": "Update the address of the TV."
       },
       "user": {
         "data": {
-          "host": "Endereço da TV"
+          "host": "Host"
         },
         "data_description": {
-          "host": "Nome de rede ou endereço IP da televisão."
+          "host": "The hostname or IP address of the TV."
         },
-        "description": "Liga a TV. Após continuar, será apresentado um PIN para emparelhar."
+        "description": "Switch the TV on. After submitting, it shows a PIN for pairing."
       },
       "zeroconf_confirm": {
-        "description": "Adicionar {name}? Liga a televisão antes de continuar.",
-        "title": "TV Philips encontrada"
+        "description": "Do you want to add {name}? Switch the TV on. After submitting, it shows a PIN for pairing.",
+        "title": "Philips TV found"
       }
     }
   },
@@ -79,28 +79,16 @@
   },
   "exceptions": {
     "command_failed": {
-      "message": "A TV não confirmou a aceitação do comando: {error}"
+      "message": "The TV did not accept the command: {error}"
     },
     "hold_not_supported": {
       "message": "The TV cannot hold keys."
     },
-    "invalid_media_type": {
-      "message": "Only channels can be played, not {media_type}."
-    },
-    "invalid_source": {
-      "message": "{source} cannot be selected; only Home and Live TV can."
-    },
     "no_ambilight_off": {
       "message": "The TV's settings menu has no entry to switch Ambilight off."
     },
-    "no_channels": {
-      "message": "The TV has no channels."
-    },
     "no_mac": {
-      "message": "Não é possível enviar Wake-on-LAN sem um MAC compatível."
-    },
-    "unknown_channel": {
-      "message": "The TV has no channel {channel}."
+      "message": "The TV cannot be switched on: pairing found no network interface with Wake-on-LAN."
     },
     "unknown_effect": {
       "message": "The TV has no Ambilight style {effect}."
@@ -109,22 +97,21 @@
   "options": {
     "step": {
       "init": {
-        "title": "Funcionalidades validadas na TV",
-        "description": "Ativa apenas após validar fisicamente nesta TV. HTTP 200 não prova que o ecrã esteja ligado. Valida powerstate ligado e em standby rápido. Consulta o README. Para testar WOL, ativa temporariamente e desativa se não funcionar.",
+        "title": "TV settings",
+        "description": "Remote and media controls are enabled by default. No test mode or repeated pairing is needed. Enable optional DIAL and Ambilight only if supported by your TV. Trust power/mute readings only if they track the physical TV: a reachable API does not prove the screen is on.",
         "data": {
-          "keys_verified": "Teclas de volume e Standby validadas",
-          "wol_verified": "Ativar Wake-on-LAN (requer teste físico)",
-          "powerstate_verified": "Powerstate acompanha realmente o ecrã em standby",
-          "mute_state_verified": "Leitura de mute acompanha o comando físico",
-          "ambilight_verified": "Ambilight confirmado neste firmware",
-          "broadcast": "Endereço IPv4 de broadcast para WOL",
-          "dial_verified": "Ativar aplicações DIAL (validar na TV)",
-          "remote_testing": "Modo de teste remoto (pode interromper a TV)"
+          "enable_controls": "Enable remote and media controls",
+          "enable_wol": "Enable Wake-on-LAN",
+          "enable_dial": "Enable local DIAL applications",
+          "enable_ambilight": "Enable Ambilight",
+          "trust_powerstate": "Trust the TV powerstate reading",
+          "trust_mute_state": "Trust the TV mute reading",
+          "broadcast": "Wake-on-LAN IPv4 broadcast address"
         }
       }
     },
     "error": {
-      "invalid_broadcast": "Introduz um endereço IPv4 de broadcast válido."
+      "invalid_broadcast": "Enter a valid IPv4 broadcast address."
     }
   }
 }

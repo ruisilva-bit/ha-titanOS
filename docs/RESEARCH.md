@@ -1,97 +1,98 @@
-# Investigação técnica e evidência
+# Local protocol research
 
-## Fontes fixadas
+## Target and existing evidence
 
-| Projeto | Revisão analisada | Resultado |
+Philips **55PUS8079/12**, Titan OS, **TPN246E**. The user obtained HTTP 200
+from `https://TV_IP:1926/6/system`, found Cast TCP 8009 inaccessible, and paired
+successfully after removing the upstream Cast/standby prerequisite.
+These are user-reported observations, not new probes from this checkout.
+No TV address was supplied to the implementation environment.
+
+## Sources and reuse
+
+| Source | Reviewed revision | License / use |
 |---|---|---|
-| ksooo/ha-philips-titanos | `d23ef23d98d6ce9a54371a147d140494e3152fc3` | Base Apache-2.0; API, flow, coordinator, entities, testes e MAINTENANCE lidos. Baseline: 57 testes passaram antes de alterações. |
-| bedirhanyildirim/philips-titan-os-55pml9019-remote | `4db4cb4d109030ccb194413665aa918270584c58` | README, TITAN_OS_API.md e cliente MQTT analisados. Refere 55PML9019/12, não a TV do Rui. MIT. |
-| daCream87/uc-philips-titanos | `cf0207a0261288e5e0ebb2af248f5a160a4e99f8` | Cliente, mapeamento e comportamento de power/source analisados. Não foi encontrada licença no checkout; nenhum código copiado. |
+| [ksooo/ha-philips-titanos](https://github.com/ksooo/ha-philips-titanos) | `d23ef23d98d6ce9a54371a147d140494e3152fc3` | Apache-2.0; implementation and tests imported with attribution. |
+| [bedirhanyildirim/philips-titan-os-55pml9019-remote](https://github.com/bedirhanyildirim/philips-titan-os-55pml9019-remote) | `4db4cb4d109030ccb194413665aa918270584c58` | MIT; protocol reference, not proof for the target model. |
+| [daCream87/uc-philips-titanos](https://github.com/daCream87/uc-philips-titanos) | `cf0207a0261288e5e0ebb2af248f5a160a4e99f8` | No license identified at review; no code copied. |
 
-Issue upstream [#1](https://github.com/ksooo/ha-philips-titanos/issues/1)
-descreve emparelhamento bloqueado por Cast filtrado noutro modelo. Thread consultada,
-sem comentários devolvidos. Não havia PRs abertos nas pesquisas `standby` e
-`pairing`, nem PR existente no repositório alvo no início do trabalho.
+The upstream maintenance notes describe a different model and cannot establish
+55PUS8079 compatibility. Upstream issue #1 was reviewed; no comments were returned.
+The absence of search results for open pairing/standby PRs is not proof none exist.
+Never reproduce secret values embedded in reference code or test fixtures.
 
-## Causas identificadas no código original
+## Findings by mechanism
 
-1. `api.is_on()` abre TCP 8009. `config_flow.async_step_pair()` exige `is_on()`
-   antes de pedir PIN em 1926. Uma porta sem relação com pairing bloqueia-o.
-2. Coordinator retorna off sem consultar API quando Cast está fechado.
-   `async_turn_off()` retorna sem enviar Standby quando `data.is_on` é falso.
-3. `expect_power()` transforma intenção de comando em on/off, sem confirmação.
-4. `_request()` registava os primeiros 500 caracteres de **todas** as respostas,
-   incluindo respostas de pairing que podem conter auth keys. Removido: apenas
-   método/caminho/status são registados, e erros de pairing não incluem payloads.
-5. Endpoints opcionais e dumps de canais podem impedir o polling; o firmware da
-   referência relata bloqueios TLS sob carga. Removidos dumps automáticos,
-   isolamento de endpoints opcionais e serialização/limitação de pedidos.
-6. A referência Unfolded Circle faz retries genéricos incluindo POST, assume ON
-   quando não existe um powerstate JSON válido e pode atualizar OFF de forma
-   otimista. Não foram reproduzidas essas escolhas.
+### JointSpace v6
 
-## Protocolos alternativos: o que se sabe e o que NÃO se sabe
+HTTPS 1926 with Digest authentication and stored device credentials is the
+implemented local control path. TCP 8009 is not a valid prerequisite for pairing,
+issuing Standby, or declaring screen power. The API can answer while the panel is
+off. Authentication, communications health, requested intent and observed power
+must be represented separately.
 
-- **JointSpace v6, HTTPS 1926**: caminhos e autenticação existentes preservados.
-  `POST /6/input/key` com `{"key":"Confirm"}` etc. HTTP 200 significa aceitação
-  pelo serviço; o efeito físico continua por confirmar.
-- **Powerstate**: upstream TPN256E relata 404; a referência MQTT relata `On`
-  mesmo em standby rápido. Não é usado como autoridade por defeito. O utilizador
-  só o ativa depois de correlacionar leituras com ecrã físico nos vários estados.
-- **Screenstate**: upstream relata Off com imagem visível; apenas sondado pela
-  ferramenta de diagnóstico, não usado como autoridade.
-- **MQTT 8883**: referência documenta MQTT5/TLS, CA Titan, retained `info`, pairing
-  PIN separado e HMAC-SHA256, reply topics/CorrelationData, teclas `rc` e `deeplink`.
-  Ainda não foi observado neste modelo. Conectar não prova ecrã ligado. Não foi
-  iniciado pairing nem armazenada credencial nova. Backend MQTT não implementado.
-- **Cloud disfarçada de local**: `proxy /v1/me/user_apps`, `api=gaea`, faz chamadas
-  à API autenticada Titan cloud na referência; não satisfaz por si só uma garantia
-  de inventário de aplicações offline. YouTube Lounge usa endpoints externos e foi
-  excluído. Nenhum desses caminhos foi incorporado.
-- **DIAL 56789**: GET/POST `/apps/YouTube`, `/apps/Netflix`, `/apps/AmazonInstantVideo`,
-  Origins YouTube/Netflix conforme documentação. Backend implementado, opt-in;
-  descobre apenas registos com XML válido. Sem launch automático, sem app inventada,
-  sem interpretar `running` como foreground ou power.
-- **HDMI**: referências usam macros incompatíveis (âncora no topo ou fundo do menu,
-  ordens diferentes). Não é seguro generalizar. Source manual disponível; seleção
-  direta HDMI não anunciada. Não foram tentadas teclas HDMI especulativas.
-- **UPnP/SSDP/mDNS**: referências descrevem DIAL/dd.xml e mDNS seguro MQTT. Foi
-  realizada apenas pesquisa mDNS limitada de `_philipstv_s_rpc._tcp` e
-  `_secure-mqtt._tcp` neste host durante cinco segundos: **zero anúncios recebidos**.
-  Isto não prova ausência de serviço; VLAN/multicast podem impedir descoberta.
-  Não foi realizado scan de sub-rede nem qualquer alteração UniFi.
-- **WOL/WoWLAN**: pacote UDP 9 implementado. O efeito depende de interface/MAC,
-  VLAN, broadcast e firmware. Nenhum pacote foi enviado à TV real neste trabalho.
+The client serializes requests and spaces them by at least 0.7 seconds. Writes
+are never retried automatically after timeout. Standby is treated as a possible
+toggle: preflight checks authenticate before writing, and an in-memory latch is
+set before the request can reach the TV. No unconditional post-wake restoration
+of volume, channel or Ambilight is performed.
 
-## Matriz de compatibilidade no modelo 55PUS8079/12
+Power/mute endpoint results remain untrusted unless the user explicitly enables
+their use after a physical comparison. Deep standby is not inferred from network
+silence. Channel database writes, direct HDMI selection and absolute volume are
+not advertised as known-compatible features.
 
-Estados pedidos: **confirmado**, **detetado mas por validar**,
-**não suportado ou indisponível**. Acrescentamos a origem da evidência para não
-confundir o relato fornecido pelo Rui com observações desta execução.
+### Wake-on-LAN
 
-| Capacidade | Estado no modelo | Evidência / interpretação |
-|---|---|---|
-| GET /6/system em 1926 | Confirmado (relato do Rui) | HTTP 200 anterior; não prova ecrã ligado. |
-| Pairing JointSpace sem Cast | Confirmado (relato do Rui) | PIN já concluído após remover gate; regressão coberta por simulação. |
-| TCP 8009 | Não suportado ou indisponível (relato do Rui) | Inacessível mesmo com TV ligada; não usado. |
-| Volume/Standby/navegação/Mute | Detetado mas por validar | Integração emparelhada; comandos não funcionam corretamente segundo pedido; efeito específico ainda sem medições. |
-| Powerstate / screenstate | Não suportado ou indisponível para validação | Sem IP/respostas desta TV; NÃO é uma conclusão de ausência de suporte. |
-| WOL / WoWLAN | Não suportado ou indisponível para validação | Sem MAC e ensaio físico; implementação comprovada por teste do pacote. |
-| MQTT 8883 | Não suportado ou indisponível para validação | Referência noutro modelo; não detetado nesta TV. |
-| DIAL 56789 / UPnP | Não suportado ou indisponível para validação | Backend DIAL simulado; falta deteção no IP real. |
-| Ambilight | Não suportado ou indisponível para validação | Não assumir só pelo modelo; entity requer indicação da API e opt-in. |
-| HDMI direto / apps MQTT / app ativa / volume absoluto | Não suportado ou indisponível nesta versão | Deliberadamente não anunciados; não se conclui impossibilidade do hardware. |
+Uses the suitable MAC from the existing paired system data, with asynchronous
+UDP broadcast. Network/VLAN delivery and wake capability remain model/firmware
+questions. Sending a valid packet records intent, not an observed lit screen.
 
-Não houve acesso ao endereço da TV nem à instalação HA. Nenhuma capacidade de
-controlo físico está a ser promovida a confirmada com base em testes unitários.
-Não é possível provar impossibilidade de um protocolo sem observar este firmware.
+### DIAL
 
-## Máquina de estados
+The local DIAL app service uses HTTP port **56789**. The implementation queries
+known candidates `YouTube`, `Netflix`, `AmazonInstantVideo`, parses XML
+registrations, and only exposes detected candidates when enabled. Discovery is
+refreshed separately from JointSpace and does not impose a cloud dependency.
+A registration or `running` result is not proof of foreground focus or power.
+Launch completion on this TV has not been observed. **Plex has not been added**:
+no compatible local registration/launch protocol has been confirmed.
 
-`unknown` → observação explícita fiável → `on` ou `quick_standby`.
-Comando WOL → `waking`; comando Standby → `standby_pending`; ambos são intenções.
-Após deadline sem confirmação → `unknown`. Falha de comunicação → `unavailable`.
-`deep_standby` está reservado: rede silenciosa não o distingue de TV sem corrente
-ou falha de VLAN. Não inferir off pela ausência de porta, por timeout ou por HTTP.
-O latch de Standby sobrevive a polls sem evidência e timeouts, mas não a reload;
-reload é uma ação manual após confirmar fisicamente o estado, nunca um retry.
+### MQTT and app inventory
+
+The remote reference describes MQTT/TLS (including port 36669), HDMI and app
+launch mechanisms on another Philips model. Its inventory uses a Titan `proxy`
+cloud request; that is not an offline catalogue. The mechanism is researched,
+not implemented or certified here. Firmware ports, authentication and command
+schemas must be observed on the target before adding it. Do not copy embedded
+credentials or brute-force the TV.
+
+### Matter
+
+Philips documents “TV Control with Matter” for the 2024 8079 series. The user
+confirmed the menu, tried Matter and reported limited functions. Exact clusters,
+entities and actions were not supplied. Matter may complement local controls;
+it is not evidence that HA supports a full remote or Plex launch.
+
+- [Philips Matter guidance](https://tv-sound-monitors.philips.com/s/article/What-is-Matter-and-how-can-I-use-it-on-the-Philips-Titan-OS-TV?language=en_US)
+- [Home Assistant Matter](https://www.home-assistant.io/integrations/matter/)
+
+Matter over Ethernet/Wi-Fi does not itself require a Thread adapter. VLAN,
+IPv6 and multicast changes require separate authorization and are outside this
+release.
+
+## Security boundary
+
+JointSpace retains the upstream self-signed TLS behaviour (`ssl=False`); there
+is no server identity verification or pinning. This leaves a LAN MITM risk during
+pairing/control and must not be disguised as a production security guarantee.
+Use a trusted isolated LAN and no public port forwarding. Credentials are not
+logged or included in allowlisted diagnostics. HTTP redirects are disabled.
+
+## Version 1.0.0 policy
+
+Normal explicit remote commands no longer require experimental validation flags.
+The separate production opt-out switches are `enable_controls` and `enable_wol`.
+Firmware-specific read trust and optional features still default off. This removes
+a usability gate, not the need for physical acceptance. Existing pairing data,
+domain, entry version and unique IDs are unchanged.

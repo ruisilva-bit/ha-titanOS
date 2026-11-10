@@ -32,6 +32,7 @@ from .api import (
 from .const import DOMAIN
 from .dial import DialClient
 from .power import PowerEvidence, PowerState
+from .settings import option_enabled
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -141,7 +142,7 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
             system.featuring.get("jsonfeatures", {}).get("ambilight")
         )
         self.has_ambilight = self.has_ambilight and bool(
-            entry.options.get("ambilight_verified")
+            option_enabled(entry.options, "enable_ambilight")
         )
         self.dial: DialClient | None = None
         self.dial_apps: list[str] = []
@@ -155,7 +156,7 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
 
     async def _async_setup(self) -> None:
         """Discover DIAL registrations only when opted in; never launch on startup."""
-        if self.config_entry.options.get("dial_verified") and self.dial:
+        if option_enabled(self.config_entry.options, "enable_dial") and self.dial:
             self.dial_apps = await self.dial.discover()
             self._next_dial_discovery = time.monotonic() + 300
 
@@ -170,8 +171,16 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
                 translation_placeholders={"error": str(err)},
             ) from err
 
+    def ensure_controls_enabled(self) -> None:
+        """Honor the explicit production control opt-out in every entry point."""
+        if not option_enabled(self.config_entry.options, "enable_controls"):
+            raise ServiceValidationError(
+                "Remote and media controls are disabled in options"
+            )
+
     async def async_turn_on(self) -> None:
         """Serialize WOL and standby intent."""
+        self.ensure_controls_enabled()
         async with self._power_lock:
             await self._async_turn_on_locked()
 
@@ -181,10 +190,8 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
             raise ServiceValidationError(
                 translation_domain=DOMAIN, translation_key="no_mac"
             )
-        if not self.config_entry.options.get("wol_verified"):
-            raise HomeAssistantError(
-                "Validate Wake-on-LAN in integration options first"
-            )
+        if not option_enabled(self.config_entry.options, "enable_wol"):
+            raise ServiceValidationError("Wake-on-LAN is disabled in options")
         if (
             self.power.state == PowerState.WAKING
             and time.monotonic() < self.power.pending_until
@@ -200,6 +207,7 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
 
     async def async_turn_off(self) -> None:
         """Serialize concurrent power requests before probing or toggling."""
+        self.ensure_controls_enabled()
         async with self._power_lock:
             await self._async_turn_off_locked()
 
@@ -239,20 +247,20 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
         try:
             activity = await self.client.get_current_activity()
             if (
-                self.config_entry.options.get("dial_verified")
+                option_enabled(self.config_entry.options, "enable_dial")
                 and self.dial
                 and time.monotonic() >= self._next_dial_discovery
             ):
                 self.dial_apps = await self.dial.discover()
                 self._next_dial_discovery = time.monotonic() + 300
             observed = None
-            if self.config_entry.options.get("powerstate_verified"):
+            if option_enabled(self.config_entry.options, "trust_powerstate"):
                 observed = await self._optional(
                     "powerstate", self.client.get_power_state
                 )
             self.power.observe(observed)
             muted = None
-            if self.config_entry.options.get("mute_state_verified"):
+            if option_enabled(self.config_entry.options, "trust_mute_state"):
                 muted = await self._optional("mute", self.client.is_muted)
             # No channel database dumps on startup: firmware can wedge under load.
             ambilight = rgb = None
