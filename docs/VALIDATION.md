@@ -8,7 +8,7 @@
 - Baseline upstream antes de alterações: **57 passed**.
 - Suite candidata: **99 passed**, **0 failures**, **0 errors** (JUnit confirmado).
 - `uv run ruff check .`: **No issues found**.
-- `uv run ruff format --check .`: **32 files already formatted**.
+- `uv run ruff format --check .`: **33 files already formatted**.
 - `git diff --check`: sem erros.
 - Pesquisa por formatos de tokens GitHub/OpenAI e chaves privadas: zero resultados.
   A constante pública de interoperabilidade JointSpace herdada não é uma credencial

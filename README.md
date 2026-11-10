@@ -195,7 +195,10 @@ Ver [investigação e matriz de evidência](docs/RESEARCH.md) e
 - Os limites de 0,7 s / 30 s são mitigação conservadora baseada nas referências,
   não garantias do firmware TPN246E. Interromper testes se TLS começar a falhar.
 - TLS JointSpace usa certificado autoassinado sem SAN (`ssl=False`), conforme
-  o original. Usar apenas em LAN de confiança; não expor portas publicamente.
+  o original. A TV não é autenticada pelo TLS: um atacante na LAN pode fazer
+  MITM, observar pairing e adulterar respostas/comandos. Não há pinning de
+  certificado nesta versão. Usar apenas em LAN de confiança e isolada;
+  não expor portas publicamente.
 - Não há cloud, alteração de firmware, factory reset ou bypass de segurança.
 
 ## Desenvolvimento e testes

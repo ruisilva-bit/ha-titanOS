@@ -111,7 +111,7 @@
     "step": {
       "init": {
         "title": "Validated TV capabilities",
-        "description": "Enable only after observing the result on this TV. HTTP 200, MQTT login and a running DIAL app do not prove screen power. Powerstate must be checked while ON and in quick standby. See README for the validation procedure. All controls can first be tested via remote.send_command; enable WOL to test it, then disable it if unsuccessful.",
+        "description": "Enable only after observing the result on this TV. HTTP 200, MQTT login and a running DIAL app do not prove screen power. Powerstate must be checked while ON and in quick standby. See README for the validation procedure. Enable remote_testing temporarily for authorized tests via remote.send_command; enable WOL to test it, then disable it if unsuccessful.",
         "data": {
           "keys_verified": "Volume and Standby keys tested on this TV",
           "wol_verified": "Enable Wake-on-LAN (hardware validation required)",
