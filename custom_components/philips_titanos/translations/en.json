@@ -1,0 +1,131 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Device is already configured",
+      "cannot_connect": "Failed to connect",
+      "not_supported": "This device is not a Philips TV with Titan OS.",
+      "reauth_successful": "Re-authentication was successful",
+      "reconfigure_successful": "Reconfiguration was successful",
+      "unique_id_mismatch": "This is a different TV than the one configured."
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "invalid_pin": "The PIN was wrong or has expired. A new PIN is now shown on the TV.",
+      "tv_off": "The TV is in standby. Switch it on and submit again."
+    },
+    "flow_title": "{name}",
+    "step": {
+      "pair": {
+        "data": {
+          "pin": "PIN"
+        },
+        "data_description": {
+          "pin": "The PIN shown on the TV. It is valid for 30 seconds."
+        },
+        "description": "Enter the PIN shown on {name}."
+      },
+      "reauth_confirm": {
+        "description": "{name} no longer accepts the stored credentials. Switch the TV on and submit to pair again.",
+        "title": "Pair again"
+      },
+      "reconfigure": {
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "The hostname or IP address of the TV."
+        },
+        "description": "Update the address of the TV."
+      },
+      "user": {
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "The hostname or IP address of the TV."
+        },
+        "description": "Switch the TV on. After submitting, it shows a PIN for pairing."
+      },
+      "zeroconf_confirm": {
+        "description": "Do you want to add {name}? Switch the TV on. After submitting, it shows a PIN for pairing.",
+        "title": "Philips TV found"
+      }
+    }
+  },
+  "entity": {
+    "light": {
+      "ambilight": {
+        "name": "Ambilight",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "video_standard": "Video: Standard",
+              "video_sports": "Video: Sports",
+              "video_natural": "Video: Cinema",
+              "video_game": "Video: Game",
+              "audio_energy_adaptive_brightness": "Audio: Music",
+              "audio_energy_adaptive_colors": "Audio: Colors",
+              "audio_vu_meter": "Audio: VU meter",
+              "audio_spectrum_analyzer": "Audio: Spectrum",
+              "audio_knight_rider_clockwise": "Audio: Scanner clockwise",
+              "audio_knight_rider_alternating": "Audio: Scanner alternating",
+              "audio_random_pixel_flash": "Audio: Random flash",
+              "audio_strobe": "Audio: Strobe",
+              "audio_party": "Audio: Party"
+            }
+          }
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "The TV did not accept the command: {error}"
+    },
+    "hold_not_supported": {
+      "message": "The TV cannot hold keys."
+    },
+    "invalid_media_type": {
+      "message": "Only channels can be played, not {media_type}."
+    },
+    "invalid_source": {
+      "message": "{source} cannot be selected; only Home and Live TV can."
+    },
+    "no_ambilight_off": {
+      "message": "The TV's settings menu has no entry to switch Ambilight off."
+    },
+    "no_channels": {
+      "message": "The TV has no channels."
+    },
+    "no_mac": {
+      "message": "The TV cannot be switched on: pairing found no network interface with Wake-on-LAN."
+    },
+    "unknown_channel": {
+      "message": "The TV has no channel {channel}."
+    },
+    "unknown_effect": {
+      "message": "The TV has no Ambilight style {effect}."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Validated TV capabilities",
+        "description": "Enable only after observing the result on this TV. HTTP 200, MQTT login and a running DIAL app do not prove screen power. Powerstate must be checked while ON and in quick standby. See README for the validation procedure. Enable remote_testing temporarily for authorized tests via remote.send_command; enable WOL to test it, then disable it if unsuccessful.",
+        "data": {
+          "keys_verified": "Volume and Standby keys tested on this TV",
+          "wol_verified": "Enable Wake-on-LAN (hardware validation required)",
+          "powerstate_verified": "Powerstate endpoint follows the physical screen in standby",
+          "mute_state_verified": "Mute reading follows physical remote",
+          "ambilight_verified": "Ambilight confirmed working on this firmware",
+          "broadcast": "WOL IPv4 broadcast address",
+          "dial_verified": "Enable local DIAL apps (validate on this TV)",
+          "remote_testing": "Remote hardware test mode (may interrupt the TV)"
+        }
+      }
+    },
+    "error": {
+      "invalid_broadcast": "Enter a valid IPv4 broadcast address."
+    }
+  }
+}

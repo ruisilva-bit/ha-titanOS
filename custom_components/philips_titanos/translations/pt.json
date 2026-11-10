@@ -1,0 +1,130 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "O dispositivo já está configurado",
+      "cannot_connect": "Não foi possível ligar à TV",
+      "not_supported": "Este dispositivo não é uma Philips com Titan OS.",
+      "reauth_successful": "Reautenticação concluída",
+      "reconfigure_successful": "Reconfiguração concluída",
+      "unique_id_mismatch": "Esta TV é diferente da TV configurada."
+    },
+    "error": {
+      "cannot_connect": "Não foi possível ligar à TV",
+      "invalid_pin": "O PIN é inválido ou expirou. É apresentado um novo PIN na TV."
+    },
+    "flow_title": "{name}",
+    "step": {
+      "pair": {
+        "data": {
+          "pin": "PIN"
+        },
+        "data_description": {
+          "pin": "PIN apresentado na TV; pode expirar em 30 segundos."
+        },
+        "description": "Introduz o PIN apresentado em {name}."
+      },
+      "reauth_confirm": {
+        "description": "{name} já não aceita as credenciais. Liga a TV e continua para emparelhar.",
+        "title": "Emparelhar novamente"
+      },
+      "reconfigure": {
+        "data": {
+          "host": "Endereço da TV"
+        },
+        "data_description": {
+          "host": "The hostname or IP address of the TV."
+        },
+        "description": "Altera o endereço sem repetir o emparelhamento."
+      },
+      "user": {
+        "data": {
+          "host": "Endereço da TV"
+        },
+        "data_description": {
+          "host": "Nome de rede ou endereço IP da televisão."
+        },
+        "description": "Liga a TV. Após continuar, será apresentado um PIN para emparelhar."
+      },
+      "zeroconf_confirm": {
+        "description": "Adicionar {name}? Liga a televisão antes de continuar.",
+        "title": "TV Philips encontrada"
+      }
+    }
+  },
+  "entity": {
+    "light": {
+      "ambilight": {
+        "name": "Ambilight",
+        "state_attributes": {
+          "effect": {
+            "state": {
+              "video_standard": "Video: Standard",
+              "video_sports": "Video: Sports",
+              "video_natural": "Video: Cinema",
+              "video_game": "Video: Game",
+              "audio_energy_adaptive_brightness": "Audio: Music",
+              "audio_energy_adaptive_colors": "Audio: Colors",
+              "audio_vu_meter": "Audio: VU meter",
+              "audio_spectrum_analyzer": "Audio: Spectrum",
+              "audio_knight_rider_clockwise": "Audio: Scanner clockwise",
+              "audio_knight_rider_alternating": "Audio: Scanner alternating",
+              "audio_random_pixel_flash": "Audio: Random flash",
+              "audio_strobe": "Audio: Strobe",
+              "audio_party": "Audio: Party"
+            }
+          }
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "A TV não confirmou a aceitação do comando: {error}"
+    },
+    "hold_not_supported": {
+      "message": "The TV cannot hold keys."
+    },
+    "invalid_media_type": {
+      "message": "Only channels can be played, not {media_type}."
+    },
+    "invalid_source": {
+      "message": "{source} cannot be selected; only Home and Live TV can."
+    },
+    "no_ambilight_off": {
+      "message": "The TV's settings menu has no entry to switch Ambilight off."
+    },
+    "no_channels": {
+      "message": "The TV has no channels."
+    },
+    "no_mac": {
+      "message": "Não é possível enviar Wake-on-LAN sem um MAC compatível."
+    },
+    "unknown_channel": {
+      "message": "The TV has no channel {channel}."
+    },
+    "unknown_effect": {
+      "message": "The TV has no Ambilight style {effect}."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Funcionalidades validadas na TV",
+        "description": "Ativa apenas após validar fisicamente nesta TV. HTTP 200 não prova que o ecrã esteja ligado. Valida powerstate ligado e em standby rápido. Consulta o README. Para testar WOL, ativa temporariamente e desativa se não funcionar.",
+        "data": {
+          "keys_verified": "Teclas de volume e Standby validadas",
+          "wol_verified": "Ativar Wake-on-LAN (requer teste físico)",
+          "powerstate_verified": "Powerstate acompanha realmente o ecrã em standby",
+          "mute_state_verified": "Leitura de mute acompanha o comando físico",
+          "ambilight_verified": "Ambilight confirmado neste firmware",
+          "broadcast": "Endereço IPv4 de broadcast para WOL",
+          "dial_verified": "Ativar aplicações DIAL (validar na TV)",
+          "remote_testing": "Modo de teste remoto (pode interromper a TV)"
+        }
+      }
+    },
+    "error": {
+      "invalid_broadcast": "Introduz um endereço IPv4 de broadcast válido."
+    }
+  }
+}
