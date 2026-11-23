@@ -34,6 +34,64 @@ async def async_setup_entry(
     async_add_entities([TitanOSRemote(entry.runtime_data)])
 
 
+MAX_REPEATS = 10
+MAX_DELAY_SECS = 2.0
+
+_KEYS = (
+    "Standby",
+    "Home",
+    "Back",
+    "Confirm",
+    "CursorUp",
+    "CursorDown",
+    "CursorLeft",
+    "CursorRight",
+    "VolumeUp",
+    "VolumeDown",
+    "Mute",
+    "Source",
+    "Play",
+    "Pause",
+    "Stop",
+    "FastForward",
+    "Rewind",
+    "ChannelStepUp",
+    "ChannelStepDown",
+    "RedColour",
+    "GreenColour",
+    "YellowColour",
+    "BlueColour",
+    "Info",
+    "Options",
+    "WatchTV",
+    *(f"Digit{i}" for i in range(10)),
+)
+_KEYS_BY_NAME = {name.casefold(): name for name in _KEYS}
+_ALIASES = {
+    "up": "CursorUp",
+    "down": "CursorDown",
+    "left": "CursorLeft",
+    "right": "CursorRight",
+    "ok": "Confirm",
+    "back": "Back",
+    "home": "Home",
+}
+
+
+def _resolve_key(name: str) -> str:
+    """Return the JointSpace key for a name or alias, case-insensitively."""
+    folded = name.casefold()
+    if folded in _ALIASES:
+        return _ALIASES[folded]
+    if folded in _KEYS_BY_NAME:
+        return _KEYS_BY_NAME[folded]
+    raise ServiceValidationError(
+        translation_domain=DOMAIN,
+        translation_key="unknown_key",
+        translation_placeholders={"key": name},
+    )
+
+
 class TitanOSRemote(TitanOSEntity, RemoteEntity):
     """The TV's remote control keys."""
 
@@ -66,7 +124,11 @@ class TitanOSRemote(TitanOSEntity, RemoteEntity):
 
     @override
     async def async_send_command(self, command: Iterable[str], **kwargs: Any) -> None:
-        """Send JointSpace key names such as CursorUp or Confirm."""
+        """Send JointSpace key names such as CursorUp or Confirm.
+
+        Everything is validated before the first key is sent, so an unknown
+        name cannot leave a partial sequence on the TV.
+        """
         self._require_remote_enabled()
         if kwargs.get(ATTR_HOLD_SECS):
             raise ServiceValidationError(
@@ -74,54 +136,23 @@ class TitanOSRemote(TitanOSEntity, RemoteEntity):
             )
         num_repeats = kwargs.get(ATTR_NUM_REPEATS, DEFAULT_NUM_REPEATS)
         delay_secs = kwargs.get(ATTR_DELAY_SECS, DEFAULT_DELAY_SECS)
-        keys = ([command] if isinstance(command, str) else list(command)) * num_repeats
-        aliases = {
-            "up": "CursorUp",
-            "down": "CursorDown",
-            "left": "CursorLeft",
-            "right": "CursorRight",
-            "ok": "Confirm",
-            "back": "Back",
-            "home": "Home",
-        }
+        if not 1 <= num_repeats <= MAX_REPEATS:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="invalid_repeats",
+                translation_placeholders={"max": str(MAX_REPEATS)},
+            )
+        if not 0 <= delay_secs <= MAX_DELAY_SECS:
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                translation_key="invalid_delay",
+                translation_placeholders={"max": str(MAX_DELAY_SECS)},
+            )
+        names = [command] if isinstance(command, str) else list(command)
+        keys = [_resolve_key(name) for name in names] * num_repeats
         for index, key in enumerate(keys):
             if index:
                 await asyncio.sleep(delay_secs)
-            known = {
-                name.casefold(): name
-                for name in (
-                    "Standby",
-                    "Home",
-                    "Back",
-                    "Confirm",
-                    "CursorUp",
-                    "CursorDown",
-                    "CursorLeft",
-                    "CursorRight",
-                    "VolumeUp",
-                    "VolumeDown",
-                    "Mute",
-                    "Source",
-                    "Play",
-                    "Pause",
-                    "Stop",
-                    "FastForward",
-                    "Rewind",
-                    "ChannelStepUp",
-                    "ChannelStepDown",
-                    "RedColour",
-                    "GreenColour",
-                    "YellowColour",
-                    "BlueColour",
-                    "Info",
-                    "Options",
-                    "WatchTV",
-                    *(f"Digit{i}" for i in range(10)),
-                )
-            }
-            key = aliases.get(key.casefold(), known.get(key.casefold(), key))
-            if key not in known.values():
-                raise ServiceValidationError("Unknown JointSpace remote key")
             if key == "Standby":
                 await self.coordinator.async_turn_off()
             else:

@@ -66,14 +66,6 @@ def auto_enable_custom_integrations(enable_custom_integrations: None) -> None:
     """Load the integration from custom_components."""
 
 
-CHANNEL_DB = {
-    "channelLists": [{"id": "allst", "name": "Streaming channels"}],
-    "favoriteLists": [],
-}
-CHANNELS = [
-    {"ccid": 40005004, "preset": 5004, "name": "CNN International"},
-    {"ccid": 40005006, "preset": 5006, "name": "Euronews Deutsch"},
-]
 AMBILIGHT_STYLES = [
     {"styleName": "OFF"},
     {"styleName": "FOLLOW_VIDEO"},
@@ -123,7 +115,6 @@ def mock_client() -> Generator[AsyncMock]:
     """Mock the API client of config flow and integration."""
     client = AsyncMock(spec=TitanOSClient)
     client.get_system.return_value = system()
-    client.is_on.return_value = True
     client.get_power_state.return_value = "on"
     client.pair_request.return_value = PairingSession(
         device_id="0123456789abcdef", auth_key="pending", timestamp=42, timeout=30
@@ -135,13 +126,10 @@ def mock_client() -> Generator[AsyncMock]:
     ]
     client.get_current_activity.return_value = "browser"
     client.is_muted.return_value = False
-    client.get_channel_db.return_value = CHANNEL_DB
-    client.get_channels.return_value = CHANNELS
     client.get_ambilight_styles.return_value = AMBILIGHT_STYLES
     client.get_menu_structure.return_value = MENU
     client.get_ambilight_configuration.return_value = None
     client.get_ambilight_processed.return_value = {}
-    client.get_menu_values.return_value = {}
     with (
         patch(
             "custom_components.philips_titanos.config_flow.TitanOSClient",

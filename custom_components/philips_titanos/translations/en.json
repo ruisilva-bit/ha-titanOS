@@ -84,6 +84,12 @@
     "hold_not_supported": {
       "message": "The TV cannot hold keys."
     },
+    "invalid_delay": {
+      "message": "The delay must be between 0 and {max} seconds."
+    },
+    "invalid_repeats": {
+      "message": "The number of repeats must be between 1 and {max}."
+    },
     "no_ambilight_off": {
       "message": "The TV's settings menu has no entry to switch Ambilight off."
     },
@@ -92,6 +98,9 @@
     },
     "unknown_effect": {
       "message": "The TV has no Ambilight style {effect}."
+    },
+    "unknown_key": {
+      "message": "Unknown remote key: {key}."
     }
   },
   "options": {

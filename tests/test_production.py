@@ -53,15 +53,18 @@ def test_optional_legacy_preference_and_new_precedence(key, legacy):
     assert option_enabled({legacy: False, key: True}, key) is True
 
 
-def test_all_bundled_locales_are_english():
-    """English UI is selected even on the previously supported HA locales."""
+def test_bundled_option_keys_match_english_source():
+    """Every locale must cover the option keys the English source defines."""
     directory = ROOT / "custom_components/philips_titanos/translations"
     english = json.loads((directory / "en.json").read_text())
     assert set(english["options"]["step"]["init"]["data"]) == (
         set(DEFAULT_OPTIONS) | {"broadcast"}
     )
     for translation in directory.glob("*.json"):
-        assert json.loads(translation.read_text()) == english
+        data = json.loads(translation.read_text())
+        assert set(data["options"]["step"]["init"]["data"]) == set(
+            english["options"]["step"]["init"]["data"]
+        ), translation.name
 
 
 def test_example_matches_generator():

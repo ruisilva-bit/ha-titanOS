@@ -17,8 +17,8 @@ No TV address or actual installed HA version has been supplied to this checkout.
 | Apps | Optional DIAL; only detected YouTube/Netflix/AmazonInstantVideo. | Registration and launch not verified. |
 | Plex | No unsupported shortcut or launch claim. | Not implemented/confirmed. |
 | Direct HDMI | Source menu key; no invented direct-input mapping. | Direct selection not confirmed. |
-| Dashboard | Native card YAML, registered-service payload tests and generator. | Frontend rendering/mobile layout not observed on the user's HA. |
-| English | English UI for every bundled locale, docs and examples. | HA's own core language remains outside integration control. |
+| Dashboard | button-card YAML (HACS), registered-service payload tests and generator. | Frontend rendering, button-card confirmation and mobile layout not observed on the user's HA. |
+| Languages | English and Portuguese UI; docs and examples in English. | German falls back to English text; HA's own core language is outside integration control. |
 | Security | Secrets excluded from diagnostics; serialized requests; no write retries. | Server TLS identity is not verified; trusted LAN is required. |
 | Matter | Can coexist; no automatic entity merge. | User tried it and found limited functions. |
 

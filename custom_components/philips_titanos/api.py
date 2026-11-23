@@ -24,7 +24,6 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 _LOGGER = logging.getLogger(__name__)
 
 PORT = 1926
-CAST_PORT = 8009
 DEFAULT_TIMEOUT = 10
 
 # Philips' app secret: signs pairing grants and encrypts the /system fields.
@@ -283,16 +282,6 @@ class TitanOSClient:
             return data["powerstate"].casefold()
         return None
 
-    async def is_on(self) -> bool:
-        """Legacy Cast probe, not a screen-state signal; unused by this integration."""
-        try:
-            async with asyncio.timeout(2):
-                _, writer = await asyncio.open_connection(self.host, CAST_PORT)
-        except OSError, TimeoutError:
-            return False
-        writer.close()
-        return True
-
     async def get_network_devices(self) -> list[dict[str, Any]]:
         """Return the network interfaces including MAC and WoL state."""
         data = await self._request("GET", "/network/devices")
@@ -381,19 +370,6 @@ class TitanOSClient:
         data = await self._request("GET", "/menuitems/settings/structure")
         return (data or {}).get("node", {})
 
-    async def get_menu_values(self, node_ids: list[int]) -> dict[int, dict[str, Any]]:
-        """Return the current data of settings menu nodes, such as the item
-        selected in a list node."""
-        data = await self._request(
-            "POST",
-            "/menuitems/settings/current",
-            {"nodes": [{"nodeid": node_id} for node_id in node_ids]},
-        )
-        return {
-            value["value"]["Nodeid"]: value["value"].get("data", {})
-            for value in (data or {}).get("values", [])
-        }
-
     async def activate_menu_node(self, node_id: int, item: int | None = None) -> None:
         """Trigger a settings menu node, or select one of its list items.
 
@@ -410,25 +386,6 @@ class TitanOSClient:
             value["data"] = {"selected_item": item}
         await self._request(
             "POST", "/menuitems/settings/update", {"values": [{"value": value}]}
-        )
-
-    async def get_channel_db(self) -> dict[str, Any]:
-        """Return the channel and favorite lists."""
-        return await self._request("GET", "/channeldb/tv")
-
-    async def get_channels(self, list_id: str) -> list[dict[str, Any]]:
-        """Return the channels of a list."""
-        data = await self._request(
-            "GET", f"/channeldb/tv/channelLists/{list_id}", request_timeout=60
-        )
-        return (data or {}).get("Channel", [])
-
-    async def set_channel(self, ccid: int, list_id: str) -> None:
-        """Tune to a channel, switching to live TV if needed."""
-        await self._request(
-            "POST",
-            "/activities/tv",
-            {"channel": {"ccid": ccid}, "channelList": {"id": list_id}},
         )
 
 

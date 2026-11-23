@@ -240,28 +240,12 @@ async def test_turn_on_color(hass: HomeAssistant, mock_client: AsyncMock) -> Non
     assert state.attributes[ATTR_BRIGHTNESS] is None
 
 
-@pytest.mark.parametrize(
-    ("menu", "restored"),
-    [
-        ({300: {"activenode_id": 320}, 320: {"selected_item": 325}}, ("GAME",)),
-        ({300: {"activenode_id": 320}, 320: {"selected_item": 321}}, ()),
-        ({300: {"activenode_id": 310}}, None),
-    ],
-    ids=["menu_style", "menu_only_item", "menu_off"],
-)
 @pytest.mark.usefixtures("mock_wake_on_lan", "init_integration")
-async def test_restore_after_wake(
-    hass: HomeAssistant,
-    mock_client: AsyncMock,
-    freezer: FrozenDateTimeFactory,
-    menu: dict[int, dict[str, int]],
-    restored: tuple[str, ...] | None,
+async def test_no_write_after_wake(
+    hass: HomeAssistant, mock_client: AsyncMock, freezer: FrozenDateTimeFactory
 ) -> None:
-    """Apply the menu's style when the TV wakes with Ambilight off."""
+    """Waking with Ambilight off must never write Ambilight settings."""
     FakeAmbilight(mock_client, None)
-    mock_client.get_menu_values.side_effect = lambda nodes: {
-        node: menu[node] for node in nodes if node in menu
-    }
     await _wake(hass, mock_client, freezer)
 
     # Unknown firmware must never receive automatic Ambilight writes on wake.
@@ -281,7 +265,8 @@ async def test_no_restore_when_lit(
 ) -> None:
     """Leave Ambilight alone when the TV started it itself."""
     await _wake(hass, mock_client, freezer)
-    mock_client.get_menu_values.assert_not_awaited()
+    mock_client.set_ambilight_style.assert_not_awaited()
+    mock_client.activate_menu_node.assert_not_awaited()
 
 
 @pytest.mark.usefixtures("init_integration")
@@ -294,7 +279,8 @@ async def test_no_restore_without_wake(
     await _tick(hass, freezer)
     mock_client.get_power_state.return_value = "on"
     await _tick(hass, freezer)
-    mock_client.get_menu_values.assert_not_awaited()
+    mock_client.set_ambilight_style.assert_not_awaited()
+    mock_client.activate_menu_node.assert_not_awaited()
 
 
 @pytest.mark.usefixtures("tv", "init_integration")
