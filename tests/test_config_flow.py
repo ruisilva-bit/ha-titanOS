@@ -112,14 +112,12 @@ async def test_user_already_configured(
 
 async def test_pair_cast_closed(hass: HomeAssistant, mock_client: AsyncMock) -> None:
     """Regression: a closed Cast port must not block a JointSpace PIN request."""
-    mock_client.is_on.return_value = False
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": SOURCE_USER}, data={CONF_HOST: HOST}
     )
     assert result["step_id"] == "pair"
     assert not result["errors"]
     mock_client.pair_request.assert_awaited_once()
-    mock_client.is_on.assert_not_awaited()
 
 
 async def test_pair_invalid_pin(hass: HomeAssistant, mock_client: AsyncMock) -> None:

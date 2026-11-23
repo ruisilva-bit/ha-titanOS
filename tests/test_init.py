@@ -33,11 +33,9 @@ async def test_setup_in_standby(
     hass: HomeAssistant, config_entry: MockConfigEntry, mock_client: AsyncMock
 ) -> None:
     """Load a TV in standby without touching the authenticated API."""
-    mock_client.is_on.return_value = False
     await hass.config_entries.async_setup(config_entry.entry_id)
     assert config_entry.state is ConfigEntryState.LOADED
     mock_client.get_current_activity.assert_awaited_once()
-    mock_client.is_on.assert_not_awaited()
 
 
 async def test_auth_failure_starts_reauth(

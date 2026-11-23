@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+### Fixes
+
+- Portuguese (`pt`) interface restored; it had been a copy of the English text.
+- Ambilight: a failed menu read is retried on the next poll instead of leaving the
+  off switch and menu entries missing until reload.
+- Remote: every key is validated before the first one is sent; repeats are
+  limited to 1–10 and delays to 0–2 s.
+- Pairing: an interface without a MAC no longer aborts the flow.
+- Removed unused code: the Cast-port probe, channel-list helpers and an unused
+  menu reader.
+
+### Dashboard
+
+- Remote card rebuilt with the HACS **button-card** frontend resource: 758 → 323
+  lines. The generator is the single source for `examples/remote-card.yaml`.
+- Options, Info, Stop, Rewind and Forward were removed from the card.
+
 ## 1.0.0
 
 ### Production defaults

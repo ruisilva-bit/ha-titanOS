@@ -17,7 +17,8 @@ class TitanOSEntity(CoordinatorEntity[TitanOSCoordinator]):
         """Initialize the entity; key is None for the device's main entity."""
         super().__init__(coordinator)
         entry = coordinator.config_entry
-        assert entry.unique_id
+        if not entry.unique_id:
+            raise ValueError("Config entry has no unique ID")
         self._attr_unique_id = (
             entry.unique_id if key is None else f"{entry.unique_id}_{key}"
         )

@@ -29,13 +29,11 @@ async def call(hass, service, **data):
 async def test_verified_power_with_cast_closed(hass, init_integration, mock_client):
     """Validated power is independent of Cast and does not imply playback."""
     assert hass.states.get(ENTITY).state == STATE_ON
-    mock_client.is_on.assert_not_awaited()
     assert not hass.states.get(ENTITY).attributes["supported_features"] & (
         MediaPlayerEntityFeature.SELECT_SOURCE
         | MediaPlayerEntityFeature.PLAY_MEDIA
         | MediaPlayerEntityFeature.VOLUME_SET
     )
-    mock_client.get_channel_db.assert_not_awaited()
 
 
 async def test_safe_defaults(hass, config_entry, mock_client):
@@ -51,7 +49,6 @@ async def test_safe_defaults(hass, config_entry, mock_client):
     )
     assert hass.states.get("light.43pus8400_12_ambilight") is None
     mock_client.get_power_state.assert_not_awaited()
-    mock_client.is_on.assert_not_awaited()
 
 
 @pytest.mark.parametrize(

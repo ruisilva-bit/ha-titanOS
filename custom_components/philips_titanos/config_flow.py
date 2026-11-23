@@ -43,12 +43,25 @@ def _is_supported(data: dict[str, Any]) -> bool:
 
 
 def _wol_mac(devices: list[dict[str, Any]], host: str) -> str | None:
-    """Pick the MAC of the interface the TV can be woken through."""
-    candidates = [d for d in devices if d.get("wake-on-lan") == "Enabled"]
-    for device in candidates:
+    """Pick the MAC of the interface the TV can be woken through.
+
+    Malformed entries are skipped rather than failing the whole pairing.
+    """
+    fallback: str | None = None
+    for device in devices:
+        mac = device.get("mac")
+        if device.get("wake-on-lan") != "Enabled" or not isinstance(mac, str):
+            continue
+        try:
+            formatted = format_mac(mac)
+            if len(bytes.fromhex(formatted.replace(":", ""))) != 6:
+                continue
+        except ValueError:
+            continue
         if device.get("ip") == host:
-            return format_mac(device["mac"])
-    return format_mac(candidates[0]["mac"]) if candidates else None
+            return formatted
+        fallback = fallback or formatted
+    return fallback
 
 
 class TitanOSConfigFlow(ConfigFlow, domain=DOMAIN):

@@ -17,17 +17,18 @@ feature has been physically verified on the target TV**. The software has been
 exercised with Home Assistant 2026.10.1 and Python 3.14.9; the TV address and the
 installed HA version have not been supplied. See [acceptance](docs/ACCEPTANCE.md).
 
-All bundled UI text, documentation and dashboard examples are in English.
-English text is also supplied for the existing Portuguese/German locale entries;
-this does not change the language of Home Assistant itself.
+Documentation and dashboard examples are in English. The interface is translated
+into English and Portuguese. German (`de`) currently falls back to English text.
+This does not change the language of Home Assistant itself.
 
 ## Features
 
 - JointSpace v6 HTTPS/Digest pairing without a Cast TCP 8009 prerequisite.
 - Navigation, Home, Back, OK, Source, volume steps, mute toggle, channel keys,
   digits, colours and playback keys through the remote entity.
-- Native [remote dashboard card](examples/remote-card.yaml): no custom frontend
-  dependency, with navigation pad, power confirmation, digits and media controls.
+- [Remote dashboard card](examples/remote-card.yaml) built with the HACS
+  **button-card** frontend resource: power, navigation pad, volume/channel,
+  playback, digits, colours and media controls in one compact layout.
 - Guarded Standby: authenticated preflight, concurrent-call serialization and
   no automatic repeat after an ambiguous success/timeout.
 - Async Wake-on-LAN, validated MAC and configurable IPv4 broadcast.
@@ -87,12 +88,15 @@ uv run python tools/build_dashboard.py \
   --output remote-card.yaml
 ```
 
-No server-side frontend resource registration is required. The card includes
-power confirmations and disables hold/double-tap actions to avoid accidental
-repeated toggles. Runtime errors still apply if firmware rejects a key. Its media
-control card provides access to detected DIAL apps through the media browser.
-Dashboard YAML/service actions are validated in automated tests; visual rendering
-in the user's HA frontend has not been observed.
+The card needs **button-card** installed from HACS (Frontend category) first.
+Each button sends one key; hold and double-tap actions are disabled to avoid
+accidental repeated toggles. Wake and Standby ask for confirmation through the
+button's `confirmation` option. That option is not verified on your installed
+button-card version, so check it before relying on it. Options, Info, Stop,
+Rewind and Forward are not on the card; use the media browser or a custom card
+for them. The media control card provides access to detected DIAL apps.
+Dashboard YAML and service calls are validated in automated tests; visual
+rendering in your HA frontend has not been observed.
 
 ### Applications and Plex
 

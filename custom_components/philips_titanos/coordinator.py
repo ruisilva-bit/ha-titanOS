@@ -84,15 +84,6 @@ class AmbilightStyle:
         return f"{prefix}_{self.setting.lower()}"
 
 
-@dataclass(frozen=True, slots=True)
-class Channel:
-    """A channel the TV can tune to."""
-
-    ccid: int
-    name: str
-    list_id: str
-
-
 type TitanOSConfigEntry = ConfigEntry[TitanOSCoordinator]
 
 
@@ -131,13 +122,10 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
         )
         self.client = client
         self.system = system
-        self.channels: list[Channel] = []
-        self.last_channel: Channel | None = None
         self.ambilight_styles: list[AmbilightStyle] = []
         self.ambilight_off_node: int | None = None
         # Menu node and list item for each style that has one.
         self.ambilight_menu: dict[AmbilightStyle, tuple[int, int]] = {}
-        self._ambilight_style_node: int | None = None
         self.has_ambilight = bool(
             system.featuring.get("jsonfeatures", {}).get("ambilight")
         )
@@ -314,18 +302,11 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
             ambilight_rgb=rgb,
         )
 
-    async def _async_fetch_channels(self) -> list[Channel]:
-        db: dict[str, Any] = await self.client.get_channel_db() or {}
-        channels: list[Channel] = []
-        for channel_list in db.get("channelLists", []):
-            list_id = channel_list["id"]
-            channels.extend(
-                Channel(ccid=int(c["ccid"]), name=c["name"], list_id=list_id)
-                for c in await self.client.get_channels(list_id)
-            )
-        return channels
-
     async def _async_fetch_ambilight(self) -> None:
+        """Load styles and menu nodes; commit only when every request succeeded.
+
+        A failure part-way must leave the state empty, so the next poll retries.
+        """
         styles = await self.client.get_ambilight_styles()
         settings = {s["styleName"]: s.get("algorithms", []) for s in styles}
         result = []
@@ -334,18 +315,18 @@ class TitanOSCoordinator(DataUpdateCoordinator[TitanOSData]):
         result += [
             AmbilightStyle("FOLLOW_AUDIO", s) for s in settings.get("FOLLOW_AUDIO", [])
         ]
-        self.ambilight_styles = result
         menu = await self.client.get_menu_structure()
-        if off := find_menu_node(menu, "ambilight_off"):
-            self.ambilight_off_node = off["node_id"]
-        if style_node := find_menu_node(menu, "ambilight_style"):
-            self._ambilight_style_node = style_node["node_id"]
+        off_node = find_menu_node(menu, "ambilight_off")
+        menu_items: dict[AmbilightStyle, tuple[int, int]] = {}
         for context in ("ambilight_follow_video", "ambilight_follow_audio"):
             if not (node := find_menu_node(menu, context)):
                 continue
             for item in node.get("data", {}).get("enums", []):
                 if style := MENU_STYLES.get(item.get("string_id")):
-                    self.ambilight_menu[AmbilightStyle(*style)] = (
+                    menu_items[AmbilightStyle(*style)] = (
                         node["node_id"],
                         item["enum_id"],
                     )
+        self.ambilight_styles = result
+        self.ambilight_off_node = off_node["node_id"] if off_node else None
+        self.ambilight_menu = menu_items
