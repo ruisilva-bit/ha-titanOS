@@ -5,6 +5,11 @@
     "@ruisilva-bit"
   ],
   "config_flow": true,
+  "dependencies": [
+    "frontend",
+    "http",
+    "panel_custom"
+  ],
   "documentation": "https://github.com/ruisilva-bit/ha-titanOS",
   "integration_type": "device",
   "iot_class": "local_polling",
@@ -13,10 +18,5 @@
   "version": "1.0.0",
   "zeroconf": [
     "_philipstv_s_rpc._tcp.local."
-  ],
-  "dependencies": [
-    "frontend",
-    "http",
-    "panel_custom"
   ]
 }
