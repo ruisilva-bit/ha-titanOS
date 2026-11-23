@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 import pytest
-import yaml
 
 from custom_components.philips_titanos.api import CannotConnect
 from custom_components.philips_titanos.settings import (
@@ -13,28 +12,12 @@ from custom_components.philips_titanos.settings import (
     option_enabled,
 )
 from homeassistant.components.media_player import MediaPlayerEntityFeature
-from homeassistant.const import CONF_MAC
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
-from tools.build_dashboard import build_card
 
 ROOT = Path(__file__).parents[1]
 REMOTE = "remote.43pus8400_12"
 PLAYER = "media_player.43pus8400_12"
-
-
-def walk_cards(card):
-    """Walk nested native cards without assuming their layout."""
-    yield card
-    for child in card.get("cards", []):
-        yield from walk_cards(child)
-
-
-ACTIONS = [
-    card["tap_action"]
-    for card in walk_cards(build_card(REMOTE, PLAYER))
-    if card.get("tap_action", {}).get("action") == "perform-action"
-]
 
 
 @pytest.mark.parametrize("key,default", DEFAULT_OPTIONS.items())
@@ -65,60 +48,6 @@ def test_bundled_option_keys_match_english_source():
         assert set(data["options"]["step"]["init"]["data"]) == set(
             english["options"]["step"]["init"]["data"]
         ), translation.name
-
-
-def test_example_matches_generator():
-    """The shipped YAML is the tested generator output, not a stale sketch."""
-    content = yaml.safe_load((ROOT / "examples/remote-card.yaml").read_text())
-    assert content == build_card("remote.your_tv", "media_player.your_tv")
-    for card in walk_cards(content):
-        if card["type"] == "button":
-            assert card["hold_action"] == {"action": "none"}
-            assert card.get("double_tap_action", {"action": "none"}) == {
-                "action": "none"
-            }
-    power = [a for a in ACTIONS if a["perform_action"] != "remote.send_command"]
-    assert len(power) == 2
-    assert all(a.get("confirmation") for a in power)
-
-
-@pytest.mark.parametrize(
-    "remote,player",
-    [("light.tv", PLAYER), (REMOTE, "remote.tv"), ("remote.TV", PLAYER)],
-)
-def test_generator_rejects_invalid_entity_ids(remote, player):
-    with pytest.raises(ValueError):
-        build_card(remote, player)
-
-
-@pytest.mark.parametrize("action", ACTIONS)
-async def test_every_dashboard_button_uses_registered_ha_service(
-    hass, config_entry, mock_client, mock_wake_on_lan, action
-):
-    """Exercise shipped button data through HA with only TV I/O mocked."""
-    hass.config_entries.async_update_entry(config_entry, options={})
-    await hass.config_entries.async_setup(config_entry.entry_id)
-    await hass.async_block_till_done()
-    domain, service = action["perform_action"].split(".")
-    before = dict(config_entry.data)
-    await hass.services.async_call(
-        domain,
-        service,
-        {**action["target"], **action.get("data", {})},
-        blocking=True,
-    )
-    if service == "send_command":
-        mock_client.send_key.assert_awaited_once_with(action["data"]["command"][0])
-    elif service == "turn_off":
-        mock_client.send_key.assert_awaited_once_with("Standby")
-    else:
-        mock_wake_on_lan.assert_awaited_once_with(before[CONF_MAC], "255.255.255.255")
-        mock_client.send_key.assert_not_awaited()
-    assert config_entry.data == before
-    mock_client.pair_request.assert_not_awaited()
-    mock_client.pair_grant.assert_not_awaited()
-    mock_client.get_power_state.assert_not_awaited()
-    assert hass.states.get(PLAYER).state == "unknown"
 
 
 async def test_wol_opt_out_blocks_remote_and_media_feature(

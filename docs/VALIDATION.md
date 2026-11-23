@@ -28,13 +28,12 @@ malformed grants, diagnostics, request concurrency and ambiguous Standby guards.
 They use simulated network clients unless a test explicitly creates a local
 in-process endpoint. They do not operate the user's TV.
 
-Local run of this revision (Python 3.14.6, `pytest`): 158 tests passed, with
+Local run of this revision (Python 3.14.6, `pytest`): 120 tests passed, with
 `ruff check` and `ruff format --check` clean. hassfest and HACS were not run locally.
 
-The dashboard example is parsed and its remote button payloads are executed
-against registered HA services with mocked TV I/O. The generator validates entity
-IDs. This proves service-schema/allowlist compatibility, not browser appearance,
-phone ergonomics, TV-key effects or Plex launch.
+The TV panel's keys are checked against the remote service's key table, and its
+buttons were driven in headless Chromium with a stub `hass` (payloads, confirmations,
+layout at 390 px and desktop). Real Home Assistant frontend rendering was not run.
 
 ## Read-only hardware procedure
 

@@ -8,7 +8,7 @@ DEFAULT_OPTIONS = {
     "enable_wol": True,
     "enable_dial": False,
     "enable_ambilight": False,
-    "trust_powerstate": False,
+    "trust_powerstate": True,
     "trust_mute_state": False,
 }
 LEGACY_OPTIONS = {

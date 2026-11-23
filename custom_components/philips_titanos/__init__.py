@@ -5,12 +5,14 @@
 from homeassistant.const import CONF_HOST, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import SystemInfo, TitanOSClient, TitanOSError
-from .const import CONF_AUTH_KEY, CONF_DEVICE_ID
+from .const import CONF_AUTH_KEY, CONF_DEVICE_ID, DOMAIN
 from .coordinator import TitanOSConfigEntry, TitanOSCoordinator
 from .dial import DialClient
+from .panel import async_register_panel, async_unregister_panel
 
 PLATFORMS: list[Platform] = [
     Platform.BINARY_SENSOR,
@@ -38,6 +40,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: TitanOSConfigEntry) -> b
     entry.async_on_unload(entry.add_update_listener(_async_options_updated))
     entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    registry = er.async_get(hass)
+    remote_id = registry.async_get_entity_id(
+        Platform.REMOTE, DOMAIN, f"{entry.unique_id}_remote"
+    )
+    player_id = registry.async_get_entity_id(
+        Platform.MEDIA_PLAYER, DOMAIN, entry.unique_id
+    )
+    if remote_id and player_id:
+        await async_register_panel(hass, entry, remote_id, player_id)
+        entry.async_on_unload(lambda: async_unregister_panel(hass, entry))
     return True
 
 

@@ -66,6 +66,19 @@ def auto_enable_custom_integrations(enable_custom_integrations: None) -> None:
     """Load the integration from custom_components."""
 
 
+@pytest.fixture(autouse=True)
+def no_frontend_bundle() -> Generator[None]:
+    """Skip the frontend bundle, which the test environment does not ship.
+
+    The integration depends on ``frontend`` to register its sidebar panel. Real
+    installs always have the bundle; tests only need panel registration.
+    """
+    with patch(
+        "homeassistant.components.frontend.async_setup", AsyncMock(return_value=True)
+    ):
+        yield
+
+
 AMBILIGHT_STYLES = [
     {"styleName": "OFF"},
     {"styleName": "FOLLOW_VIDEO"},
