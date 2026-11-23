@@ -21,6 +21,15 @@ Documentation and the TV panel text are in English. The interface is translated
 into English and Portuguese. German (`de`) currently falls back to English text.
 This does not change the language of Home Assistant itself.
 
+### Changes since 1.0.0 (unreleased)
+
+- A **TV** sidebar panel is added with each TV, bound to its real entities.
+  It replaces the dashboard YAML and its button-card dependency.
+- The TV power reading is trusted by default, so the device shows On/Standby and
+  its controls work. See the power warning below before you rely on it.
+- The LAN connection sensor is hidden by default.
+- Fixes listed in [CHANGELOG.md](CHANGELOG.md).
+
 ## Features
 
 - JointSpace v6 HTTPS/Digest pairing without a Cast TCP 8009 prerequisite.
@@ -84,6 +93,11 @@ Stop, Rewind and Forward are not on the panel.
 
 Remove the panel by removing the TV from **Settings → Devices & services**.
 
+If the TV item is missing after an update, restart Home Assistant once. The
+integration needs `frontend`, `http` and `panel_custom`, which Home Assistant
+loads by default. Check **Settings → System → Logs** for the
+`philips_titanos` entries if it still does not appear.
+
 ### Applications and Plex
 
 Enable **Local DIAL applications** to discover supported registrations. Then use
@@ -138,6 +152,18 @@ state remains reserved until an explicit reliable signal exists.
 If the TV exposes no trustworthy power state, use the remote buttons independently
 of the media player's `unknown` screen state. No production setting can create
 hardware telemetry that the firmware does not provide.
+
+**Power reading on by default.** The power reading is trusted out of the box.
+Before you rely on it, check it against the physical screen, with the screen on
+and in standby:
+
+```bash
+python3 tools/probe_tv.py TV_IP
+```
+
+Turn the option off in the integration's settings if the state does not follow
+the screen. A false reading can make Standby reach a TV that is already in
+standby, because Standby is a toggle that can wake it.
 
 ## Read-only hardware diagnosis
 
