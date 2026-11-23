@@ -17,7 +17,7 @@ feature has been physically verified on the target TV**. The software has been
 exercised with Home Assistant 2026.10.1 and Python 3.14.9; the TV address and the
 installed HA version have not been supplied. See [acceptance](docs/ACCEPTANCE.md).
 
-Documentation and dashboard examples are in English. The interface is translated
+Documentation and the TV panel text are in English. The interface is translated
 into English and Portuguese. German (`de`) currently falls back to English text.
 This does not change the language of Home Assistant itself.
 
@@ -26,9 +26,8 @@ This does not change the language of Home Assistant itself.
 - JointSpace v6 HTTPS/Digest pairing without a Cast TCP 8009 prerequisite.
 - Navigation, Home, Back, OK, Source, volume steps, mute toggle, channel keys,
   digits, colours and playback keys through the remote entity.
-- [Remote dashboard card](examples/remote-card.yaml) built with the HACS
-  **button-card** frontend resource: power, navigation pad, volume/channel,
-  playback, digits, colours and media controls in one compact layout.
+- **TV sidebar panel** added automatically with the TV: power, navigation pad,
+  volume and channel, playback, digits and colours. Native buttons, no HACS.
 - Guarded Standby: authenticated preflight, concurrent-call serialization and
   no automatic repeat after an ambiguous success/timeout.
 - Async Wake-on-LAN, validated MAC and configurable IPv4 broadcast.
@@ -73,30 +72,17 @@ Add `https://github.com/ruisilva-bit/ha-titanOS` as a custom **Integration**
 repository and select the desired published version. Do not leave the original
 repository managing the same directory. Review release notes before updating.
 
-## Remote dashboard
+## TV panel
 
-Find the actual `remote` and `media_player` IDs in **Settings → Devices & services**.
-Add a **Manual card** to a dashboard, paste `examples/remote-card.yaml`, and replace
-`remote.your_tv` and `media_player.your_tv` with those IDs.
+Adding the TV creates a **TV** item in the sidebar. It is bound to this TV's
+remote and media player, so there is nothing to paste or configure. The panel
+uses only native buttons and works with the light and dark themes.
 
-Alternatively, generate the card with exact IDs in a development checkout:
+Wake and Standby ask for confirmation first. Each button sends one key through
+the remote entity, so the same validation and safety rules apply. Options, Info,
+Stop, Rewind and Forward are not on the panel.
 
-```bash
-uv run python tools/build_dashboard.py \
-  --remote remote.living_room_tv \
-  --player media_player.living_room_tv \
-  --output remote-card.yaml
-```
-
-The card needs **button-card** installed from HACS (Frontend category) first.
-Each button sends one key; hold and double-tap actions are disabled to avoid
-accidental repeated toggles. Wake and Standby ask for confirmation through the
-button's `confirmation` option. That option is not verified on your installed
-button-card version, so check it before relying on it. Options, Info, Stop,
-Rewind and Forward are not on the card; use the media browser or a custom card
-for them. The media control card provides access to detected DIAL apps.
-Dashboard YAML and service calls are validated in automated tests; visual
-rendering in your HA frontend has not been observed.
+Remove the panel by removing the TV from **Settings → Devices & services**.
 
 ### Applications and Plex
 
@@ -126,7 +112,7 @@ integration does not automatically merge Matter entities or assume their abiliti
 | Enable Wake-on-LAN | On | Requires a stored suitable MAC; sending a packet is not proof of wake. |
 | Local DIAL applications | Off | Read registrations and allow explicit launch on the local TV. |
 | Ambilight | Off | Also requires TV feature/style support; enable only if applicable. |
-| Trust the TV powerstate reading | Off | Enable only if ON/standby reads actually follow the physical screen. |
+| Trust the TV powerstate reading | On | Turn off if the TV's ON/standby reading does not follow the physical screen. |
 | Trust the TV mute reading | Off | Enable only if it follows the physical remote, not stale API echoes. |
 | WOL IPv4 broadcast | 255.255.255.255 | Use the TV VLAN's broadcast when needed and allowed. |
 

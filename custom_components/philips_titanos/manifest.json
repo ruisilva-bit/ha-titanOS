@@ -13,5 +13,10 @@
   "version": "1.0.0",
   "zeroconf": [
     "_philipstv_s_rpc._tcp.local."
+  ],
+  "dependencies": [
+    "frontend",
+    "http",
+    "panel_custom"
   ]
 }

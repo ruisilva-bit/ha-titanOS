@@ -146,27 +146,3 @@ async def test_repeats_and_delay_are_bounded(
     with pytest.raises(ServiceValidationError):
         await _send(hass, command=["CursorUp"], **data)
     mock_client.send_key.assert_not_awaited()
-
-
-DASHBOARD_CUTS = {"Options", "Info", "Stop", "Rewind", "Forward"}
-
-
-def _button_cards(node: dict):
-    if node.get("type") == "custom:button-card":
-        yield node
-    for child in node.get("cards", []):
-        yield from _button_cards(child)
-
-
-def test_dashboard_card_uses_button_card_and_drops_cut_buttons() -> None:
-    """The shipped card matches the layout agreed for the remote."""
-    import yaml
-
-    card = yaml.safe_load((ROOT / "examples/remote-card.yaml").read_text())
-    buttons = list(_button_cards(card))
-    names = {b.get("name") for b in buttons if b.get("name")}
-    assert len(buttons) >= 30
-    assert not names & DASHBOARD_CUTS
-    assert "Wake" in names
-    assert all(b["hold_action"] == {"action": "none"} for b in buttons)
-    assert all(b["double_tap_action"] == {"action": "none"} for b in buttons)

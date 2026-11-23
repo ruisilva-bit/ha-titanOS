@@ -15,9 +15,15 @@
 
 ### Dashboard
 
-- Remote card rebuilt with the HACS **button-card** frontend resource: 758 → 323
-  lines. The generator is the single source for `examples/remote-card.yaml`.
-- Options, Info, Stop, Rewind and Forward were removed from the card.
+- Replaced the dashboard YAML with a **TV** sidebar panel that the integration
+  registers itself: native buttons, bound to the TV's real entities, no HACS.
+  `examples/remote-card.yaml` and its generator were removed.
+- Options, Info, Stop, Rewind and Forward are not on the panel.
+- The TV power reading is now trusted by default, so the TV shows On/Standby
+  instead of Unknown and its controls are available. A false reading can make
+  Standby reach a TV that is already in standby; verify with
+  `tools/probe_tv.py` first.
+- The LAN connection sensor is disabled by default.
 
 ## 1.0.0
 
